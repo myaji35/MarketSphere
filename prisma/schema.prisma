@@ -1,0 +1,327 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 상인회 (Merchant Association)
+// ============================================
+model MerchantAssociation {
+  id              String   @id @default(uuid())
+  name            String
+  presidentName   String?  @map("president_name")
+  contactPhone    String?  @map("contact_phone")
+  email           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  markets         Market[]
+  admins          AssociationAdmin[]
+
+  @@map("merchant_associations")
+}
+
+// ============================================
+// 시장 (Market)
+// ============================================
+model Market {
+  id               String   @id @default(uuid())
+  marketName       String   @map("market_name")
+  associationId    String   @map("association_id")
+  subdomainPrefix  String   @unique @map("subdomain_prefix") // 예: mangwon
+  address          String?
+  latitude         Float?
+  longitude        Float?
+  totalStores      Int      @default(0) @map("total_stores")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  association      MerchantAssociation @relation(fields: [associationId], references: [id], onDelete: Cascade)
+  stores           Store[]
+
+  @@index([associationId])
+  @@map("markets")
+}
+
+// ============================================
+// 상점 (Store)
+// ============================================
+model Store {
+  id               String   @id @default(uuid())
+  storeName        String   @map("store_name")
+  subdomain        String   // 예: kimbapchunguk
+  marketId         String   @map("market_id")
+  ownerId          String   @map("owner_id") // User ID
+
+  // 승인 상태
+  approvalStatus   ApprovalStatus @default(PENDING) @map("approval_status")
+  approvedAt       DateTime? @map("approved_at")
+  approvedBy       String?   @map("approved_by")
+  rejectionReason  String?   @map("rejection_reason")
+
+  // 상점 정보
+  category         String
+  location         String?
+  phone            String
+  hours            Json?    // { open: "09:00", close: "20:00", closedDays: ["일요일"] }
+  photoUrl         String?  @map("photo_url")
+  description      String?
+
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  market           Market   @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  owner            User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  products         Product[]
+  timeSales        TimeSale[]
+  subscriptions    Subscription[]
+
+  @@unique([marketId, subdomain]) // 같은 시장 내 서브도메인 중복 방지
+  @@index([marketId])
+  @@index([approvalStatus])
+  @@index([ownerId])
+  @@map("stores")
+}
+
+enum ApprovalStatus {
+  PENDING   // 대기 중
+  APPROVED  // 승인됨
+  REJECTED  // 거부됨
+  SUSPENDED // 정지됨
+}
+
+// ============================================
+// 상품 (Product)
+// ============================================
+model Product {
+  id                      String   @id @default(uuid())
+  storeId                 String   @map("store_id")
+  productName             String   @map("product_name")
+  price                   Int
+  discountPrice           Int?     @map("discount_price")
+  imageUrl                String   @map("image_url")
+
+  // AI 생성 콘텐츠
+  aiGeneratedDescription  String?  @map("ai_generated_description")
+  aiGeneratedHashtags     String[] @map("ai_generated_hashtags")
+
+  stock                   Int      @default(0)
+  isAvailable             Boolean  @default(true) @map("is_available")
+
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  store                   Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@index([isAvailable])
+  @@map("products")
+}
+
+// ============================================
+// 타임세일 (Time Sale)
+// ============================================
+model TimeSale {
+  id              String   @id @default(uuid())
+  storeId         String   @map("store_id")
+  title           String
+  description     String?
+  discountRate    Int      @map("discount_rate") // 할인율 (%)
+  startTime       DateTime @map("start_time")
+  endTime         DateTime @map("end_time")
+  isActive        Boolean  @default(true) @map("is_active")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  store           Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@index([storeId])
+  @@index([isActive])
+  @@map("time_sales")
+}
+
+// ============================================
+// 사용자 (User) - Clerk 연동
+// ============================================
+model User {
+  id            String    @id // Clerk User ID (외부 ID)
+  name          String?
+  email         String?   @unique
+  phone         String?   @unique
+  role          UserRole  @default(CUSTOMER)
+
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  stores        Store[]  // 사용자가 소유한 상점
+  favorites     Favorite[]
+  pushTokens    PushToken[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  CUSTOMER           // 고객
+  MERCHANT           // 상점주
+  ASSOCIATION_ADMIN  // 상인회 관리자
+  PLATFORM_ADMIN     // 플랫폼 관리자
+}
+
+// NextAuth 테이블 제거 - Clerk가 인증 자체 관리
+
+// ============================================
+// 구독 (Subscription) - 토스페이먼츠
+// ============================================
+model Subscription {
+  id                String            @id @default(uuid())
+  userId            String            @map("user_id") // Clerk User ID
+  storeId           String?           @map("store_id") // 상점 연결 (선택)
+
+  // 구독 정보
+  plan              SubscriptionPlan  // BASIC, PREMIUM
+  status            SubscriptionStatus @default(PENDING) // PENDING, ACTIVE, CANCELLED, EXPIRED
+
+  // 결제 정보
+  billingKey        String?           @unique @map("billing_key") // 토스페이먼츠 빌링키
+  customerKey       String            @map("customer_key") // 고객 고유 키
+
+  // 구독 기간
+  startDate         DateTime?         @map("start_date")
+  endDate           DateTime?         @map("end_date")
+  nextBillingDate   DateTime?         @map("next_billing_date")
+
+  // 가격
+  amount            Int               // 월 결제 금액 (원)
+
+  // 취소 정보
+  cancelledAt       DateTime?         @map("cancelled_at")
+  cancelReason      String?           @map("cancel_reason")
+
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  store             Store?            @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  payments          Payment[]
+
+  @@index([userId])
+  @@index([storeId])
+  @@index([status])
+  @@map("subscriptions")
+}
+
+enum SubscriptionPlan {
+  BASIC     // 기본: 월 10,000원
+  PREMIUM   // 프리미엄: 월 20,000원
+}
+
+enum SubscriptionStatus {
+  PENDING   // 대기 중 (결제 미완료)
+  ACTIVE    // 활성 (정상 결제 중)
+  CANCELLED // 취소됨
+  EXPIRED   // 만료됨
+  FAILED    // 결제 실패
+}
+
+// ============================================
+// 결제 내역 (Payment)
+// ============================================
+model Payment {
+  id                String          @id @default(uuid())
+  subscriptionId    String          @map("subscription_id")
+  userId            String          @map("user_id")
+
+  // 토스페이먼츠 정보
+  paymentKey        String          @unique @map("payment_key") // 토스 결제 키
+  orderId           String          @unique @map("order_id") // 주문 ID
+
+  // 결제 금액
+  amount            Int
+  method            String?         // 카드, 간편결제 등
+
+  // 결제 상태
+  status            PaymentStatus   @default(PENDING)
+
+  // 결제 일시
+  requestedAt       DateTime        @map("requested_at")
+  approvedAt        DateTime?       @map("approved_at")
+
+  // 실패 정보
+  failReason        String?         @map("fail_reason")
+
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  subscription      Subscription    @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([userId])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING   // 대기 중
+  DONE      // 완료
+  CANCELLED // 취소
+  FAILED    // 실패
+}
+
+// ============================================
+// 상인회 관리자
+// ============================================
+model AssociationAdmin {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  associationId   String   @map("association_id")
+  role            String   @default("admin") // president, admin, manager
+  permissions     Json?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  association     MerchantAssociation @relation(fields: [associationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, associationId])
+  @@index([associationId])
+  @@map("association_admins")
+}
+
+// ============================================
+// 단골 (Favorite)
+// ============================================
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  storeId   String   @map("store_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storeId])
+  @@index([userId])
+  @@index([storeId])
+  @@map("favorites")
+}
+
+// ============================================
+// 푸시 토큰 (Push Token)
+// ============================================
+model PushToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  platform  String   // ios, android, web
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_tokens")
+}
