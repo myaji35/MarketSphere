@@ -23,6 +23,23 @@ MarketSphere는 전통시장 소상공인이 마케팅 기술이나 노력 없�
 
 ## 📦 설치 및 실행
 
+### ⚡ 30초 안에 시작하기
+
+```bash
+npm install && npm run dev
+```
+
+브라우저에서 http://localhost:3000/merchant 접속 → **바로 테스트 가능!**
+
+> ✨ **API 키 불필요** | **DB 선택적** | **자동 로그인**
+
+📖 **자세한 가이드**: [QUICKSTART.md](./QUICKSTART.md) | [DEV-GUIDE.md](./DEV-GUIDE.md)
+
+### 정식 설정 (프로덕션)
+
+<details>
+<summary>클릭하여 펼치기</summary>
+
 ### 1. 의존성 설치
 
 ```bash
@@ -31,16 +48,14 @@ npm install
 
 ### 2. 환경 변수 설정
 
-`.env.example`을 복사하여 `.env` 파일 생성:
+`.env` 파일에서 개발 모드를 비활성화하고 실제 API 키 설정:
 
-```bash
-cp .env.example .env
+```env
+NEXT_PUBLIC_DEV_MODE="false"
+DATABASE_URL="postgresql://user:password@localhost:5432/marketsphere"
+OPENAI_API_KEY="sk-your-actual-key"
+CLERK_SECRET_KEY="sk_live_your-actual-key"
 ```
-
-필수 환경 변수 설정:
-- `DATABASE_URL`: PostgreSQL 연결 URL
-- `NEXTAUTH_SECRET`: 인증 시크릿 키 (openssl rand -base64 32)
-- `OPENAI_API_KEY`: OpenAI API 키
 
 ### 3. 데이터베이스 설정
 
@@ -65,6 +80,8 @@ npm run dev
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000) 접속
+
+</details>
 
 ## 📁 프로젝트 구조
 

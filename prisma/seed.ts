@@ -34,6 +34,7 @@ async function main() {
   // 3. 테스트 사용자 생성 (상점주)
   const testMerchant = await prisma.user.create({
     data: {
+      id: 'test_merchant_id_1',
       name: '김상인',
       email: 'merchant@test.com',
       phone: '010-1234-5678',
@@ -114,6 +115,7 @@ async function main() {
   // 7. 테스트 고객 생성
   const testCustomer = await prisma.user.create({
     data: {
+      id: 'test_customer_id_1',
       name: '이고객',
       email: 'customer@test.com',
       phone: '010-9876-5432',
