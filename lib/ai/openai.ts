@@ -171,6 +171,52 @@ export async function enhanceProductImage(imageUrl: string) {
 /**
  * 계절과 날씨 정보를 기반으로 마케팅 메시지를 생성합니다.
  */
+/**
+ * OpenAI Chat Completion 생성 (범용)
+ */
+export async function generateChatCompletion(params: {
+  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>
+  temperature?: number
+  model?: string
+  maxTokens?: number
+}): Promise<string> {
+  const { messages, temperature = 0.7, model = 'gpt-4o-mini', maxTokens = 1000 } = params
+
+  // API 키가 없거나 더미 키인 경우 에러 메시지 반환
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'dummy-key-for-build') {
+    console.log('⚠️ OPENAI_API_KEY가 설정되지 않았습니다. 기본 응답을 반환합니다.')
+    return JSON.stringify({
+      recommendations: [
+        {
+          menuName: '파전과 막걸리',
+          ingredients: ['부추', '해물', '밀가루', '계란'],
+          reason: '비 오는 날엔 역시 파전이죠!',
+          category: '비오는 날 음식',
+        },
+      ],
+    })
+  }
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model,
+      messages,
+      temperature,
+      max_tokens: maxTokens,
+    })
+
+    const content = completion.choices[0]?.message?.content
+    if (!content) {
+      throw new Error('No content generated from OpenAI')
+    }
+
+    return content
+  } catch (error) {
+    console.error('Error generating chat completion:', error)
+    throw new Error('Failed to generate chat completion')
+  }
+}
+
 export async function generateWeatherBasedMarketing(
   weather: string,
   temperature: number,
