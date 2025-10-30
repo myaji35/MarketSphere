@@ -82,6 +82,7 @@ model Store {
   products         Product[]
   timeSales        TimeSale[]
   subscriptions    Subscription[]
+  favorites        Favorite[] @relation("FavoriteStores")
 
   @@unique([marketId, subdomain]) // 같은 시장 내 서브도메인 중복 방지
   @@index([marketId])
@@ -302,6 +303,7 @@ model Favorite {
   createdAt DateTime @default(now()) @map("created_at")
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store     Store    @relation("FavoriteStores", fields: [storeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, storeId])
   @@index([userId])
@@ -324,4 +326,52 @@ model PushToken {
 
   @@index([userId])
   @@map("push_tokens")
+}
+
+// ============================================
+// 마케팅 캠페인 (Marketing Campaign)
+// ============================================
+model MarketingCampaign {
+  id              String            @id @default(uuid())
+  marketId        String            @map("market_id")
+  title           String
+  message         String
+
+  // 타겟팅 옵션
+  targetAudience  TargetAudience    @default(ALL) @map("target_audience")
+  ageMin          Int?              @map("age_min")
+  ageMax          Int?              @map("age_max")
+
+  // 발송 정보
+  createdBy       String            @map("created_by") // Admin User ID
+  scheduledAt     DateTime?         @map("scheduled_at") // 예약 발송 시간
+  sentAt          DateTime?         @map("sent_at")
+
+  // 발송 결과
+  status          CampaignStatus    @default(DRAFT)
+  targetCount     Int               @default(0) @map("target_count") // 타겟 대상자 수
+  successCount    Int               @default(0) @map("success_count")
+  failureCount    Int               @default(0) @map("failure_count")
+
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  @@index([marketId])
+  @@index([status])
+  @@map("marketing_campaigns")
+}
+
+enum TargetAudience {
+  ALL             // 전체 고객
+  FAVORITES_ONLY  // 단골만
+  AGE_RANGE       // 연령대별
+  LOCATION_BASED  // 위치 기반
+}
+
+enum CampaignStatus {
+  DRAFT      // 작성 중
+  SCHEDULED  // 예약됨
+  SENT       // 발송됨
+  CANCELLED  // 취소됨
+  FAILED     // 실패
 }
