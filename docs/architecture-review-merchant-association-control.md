@@ -8,11 +8,13 @@
 ## 1. 요구사항 분석
 
 ### 핵심 요구사항
+
 - **상인회가 각 시장의 도메인을 소유하고 통제**
 - 개별 상공인은 시장 도메인 하위의 **서브도메인**으로 할당
 - 상인회가 소속 상공인을 승인/관리하는 구조
 
 ### 계층 구조
+
 ```
 MarketSphere Platform (플랫폼)
   └── 상인회 (Merchant Association)
@@ -25,51 +27,61 @@ MarketSphere Platform (플랫폼)
 ## 2. 도메인 구조 설계
 
 ### 현재 설계 (US-1.1)
+
 ```
 김밥천국.망원시장.marketsphere.com
 [상점명].[시장명].marketsphere.com
 ```
 
 ### 문제점 분석
+
 이 구조는 **기술적으로는 작동하지만**, 상인회의 **도메인 소유권**이 명확하지 않습니다.
 
 ### 권장 구조 (Option A): 시장별 독립 도메인
+
 ```
 김밥천국.망원시장.com
 [상점명].[시장도메인]
 ```
 
 **장점**:
+
 - 상인회가 `망원시장.com` 도메인을 직접 소유
 - 브랜딩 강화 (각 시장이 독립적 브랜드)
 - 상인회의 통제권 명확화
 
 **단점**:
+
 - 시장마다 도메인 구매 필요 (연 15,000원 × 14개 = 21만 원)
 - DNS 관리 복잡도 증가
 
 ### 대안 구조 (Option B): 플랫폼 도메인 + 서브도메인
+
 ```
 김밥천국.망원시장.marketsphere.com
 [상점명].[시장명].marketsphere.com
 ```
 
 **장점**:
+
 - 도메인 구매 비용 절감
 - 통합 DNS 관리 용이
 - MarketSphere 브랜드 통일성
 
 **단점**:
+
 - 상인회가 도메인을 직접 소유하지 않음
 - 시장별 독립성 약화
 
 ### 추천 방안 (Hybrid): 선택 가능
+
 ```
 기본: [상점명].[시장명].marketsphere.com (무료)
 프리미엄: [상점명].[시장도메인] (상인회가 도메인 소유)
 ```
 
 **구현**:
+
 - MVP: Option B (플랫폼 서브도메인)
 - V2: Option A 추가 (상인회가 원하면 독립 도메인 지원)
 
@@ -78,11 +90,13 @@ MarketSphere Platform (플랫폼)
 ## 3. 데이터베이스 스키마 - 상인회 통제 구조
 
 ### 현재 설계 문제점
+
 US-1.1의 `stores` 테이블에는 `market_id`만 있고, **상인회와의 관계**가 명시되지 않음.
 
 ### 개선된 스키마
 
 #### 3.1. merchant_associations (상인회 테이블)
+
 ```sql
 CREATE TABLE merchant_associations (
   association_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -96,6 +110,7 @@ CREATE TABLE merchant_associations (
 ```
 
 #### 3.2. markets (시장 테이블) - 개선
+
 ```sql
 CREATE TABLE markets (
   market_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -130,6 +145,7 @@ CREATE INDEX idx_markets_subdomain ON markets(subdomain_prefix);
 ```
 
 #### 3.3. stores (상점 테이블) - 개선
+
 ```sql
 CREATE TABLE stores (
   store_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -170,6 +186,7 @@ CREATE INDEX idx_stores_full_domain ON stores(full_domain);
 ```
 
 #### 3.4. association_admins (상인회 관리자 테이블)
+
 ```sql
 CREATE TABLE association_admins (
   admin_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -191,21 +208,21 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 
 ### 4.1. 상인회 관리자 권한
 
-| 권한 | 설명 | API |
-|-----|------|-----|
-| **상점 승인** | 신규 상점 가입 승인/거부 | `POST /api/v1/admin/stores/{storeId}/approve` |
-| **상점 정지** | 위반 상점 영업 정지 | `POST /api/v1/admin/stores/{storeId}/suspend` |
-| **도메인 관리** | 시장 도메인 설정 변경 | `PUT /api/v1/admin/markets/{marketId}/domain` |
-| **통계 조회** | 시장 전체 매출/방문자 데이터 | `GET /api/v1/admin/markets/{marketId}/stats` |
-| **공지 발송** | 시장 전체 푸시 알림 | `POST /api/v1/admin/markets/{marketId}/notifications` |
+| 권한            | 설명                         | API                                                   |
+| --------------- | ---------------------------- | ----------------------------------------------------- |
+| **상점 승인**   | 신규 상점 가입 승인/거부     | `POST /api/v1/admin/stores/{storeId}/approve`         |
+| **상점 정지**   | 위반 상점 영업 정지          | `POST /api/v1/admin/stores/{storeId}/suspend`         |
+| **도메인 관리** | 시장 도메인 설정 변경        | `PUT /api/v1/admin/markets/{marketId}/domain`         |
+| **통계 조회**   | 시장 전체 매출/방문자 데이터 | `GET /api/v1/admin/markets/{marketId}/stats`          |
+| **공지 발송**   | 시장 전체 푸시 알림          | `POST /api/v1/admin/markets/{marketId}/notifications` |
 
 ### 4.2. 상점주 권한 제한
 
-| 제한 사항 | 이유 |
-|----------|------|
+| 제한 사항                 | 이유             |
+| ------------------------- | ---------------- |
 | 서브도메인 임의 변경 불가 | 상인회 승인 필요 |
-| 시장 이탈 불가 | 상인회 계약 관계 |
-| 승인 전 페이지 비공개 | 품질 관리 |
+| 시장 이탈 불가            | 상인회 계약 관계 |
+| 승인 전 페이지 비공개     | 품질 관리        |
 
 ### 4.3. 승인 프로세스
 
@@ -234,6 +251,7 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 **Endpoint**: `POST /api/v1/stores`
 
 **Request**:
+
 ```json
 {
   "storeName": "김밥천국",
@@ -250,6 +268,7 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 ```
 
 **Response**:
+
 ```json
 {
   "storeId": "store-uuid-1234",
@@ -268,6 +287,7 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 **Authorization**: 상인회 관리자만 가능
 
 **Request**:
+
 ```json
 {
   "action": "approve", // 'approve' or 'reject'
@@ -276,6 +296,7 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 ```
 
 **Response**:
+
 ```json
 {
   "storeId": "store-uuid-1234",
@@ -293,6 +314,7 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 **Authorization**: 상인회 회장 또는 플랫폼 관리자
 
 **Request**:
+
 ```json
 {
   "domainType": "custom", // 'subdomain' or 'custom'
@@ -301,6 +323,7 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 ```
 
 **Response**:
+
 ```json
 {
   "marketId": "mangwon-market-uuid",
@@ -329,23 +352,27 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 ### 6.1. 핵심 기능
 
 #### 상점 관리
+
 - [ ] 신규 가입 승인/거부
 - [ ] 상점 목록 조회 (필터: 승인/대기/정지)
 - [ ] 상점 상세 정보 확인
 - [ ] 상점 정지/복구
 
 #### 도메인 관리
+
 - [ ] 현재 도메인 설정 확인
 - [ ] 독립 도메인 신청 (프리미엄)
 - [ ] DNS 설정 가이드
 
 #### 통계 대시보드
+
 - [ ] 시장 전체 매출 (일/주/월)
 - [ ] 상점별 매출 순위
 - [ ] 방문자 수 (앱 사용자)
 - [ ] 히트맵 (인기 구역)
 
 #### 공동 마케팅
+
 - [ ] 시장 전체 푸시 알림 발송
 - [ ] 공동 구매 이벤트 설정
 - [ ] 포인트 프로모션 관리
@@ -354,29 +381,32 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 
 ## 7. 권한 매트릭스
 
-| 기능 | 플랫폼 관리자 | 상인회 회장 | 상인회 관리자 | 상점주 |
-|-----|------------|-----------|------------|-------|
-| 시장 생성 | ✅ | ❌ | ❌ | ❌ |
-| 도메인 설정 | ✅ | ✅ | ❌ | ❌ |
-| 상점 승인 | ✅ | ✅ | ✅ | ❌ |
-| 상점 정지 | ✅ | ✅ | ✅ | ❌ |
-| 통계 조회 | ✅ | ✅ | ✅ | 본인만 |
-| 상점 정보 수정 | ✅ | ✅ | ✅ | 본인만 |
-| 푸시 발송 | ✅ | ✅ | ✅ | 본인 단골만 |
+| 기능           | 플랫폼 관리자 | 상인회 회장 | 상인회 관리자 | 상점주      |
+| -------------- | ------------- | ----------- | ------------- | ----------- |
+| 시장 생성      | ✅            | ❌          | ❌            | ❌          |
+| 도메인 설정    | ✅            | ✅          | ❌            | ❌          |
+| 상점 승인      | ✅            | ✅          | ✅            | ❌          |
+| 상점 정지      | ✅            | ✅          | ✅            | ❌          |
+| 통계 조회      | ✅            | ✅          | ✅            | 본인만      |
+| 상점 정보 수정 | ✅            | ✅          | ✅            | 본인만      |
+| 푸시 발송      | ✅            | ✅          | ✅            | 본인 단골만 |
 
 ---
 
 ## 8. 보안 고려사항
 
 ### 8.1. 도메인 인증
+
 - 독립 도메인 사용 시 **DNS TXT 레코드**로 소유권 인증 필수
 - 예: `marketsphere-verify=abc123def456`
 
 ### 8.2. 접근 제어
+
 - JWT 토큰에 `role`, `associationId`, `marketId` 포함
 - 모든 API에서 권한 검증 미들웨어 적용
 
 ### 8.3. 감사 로그
+
 - 상점 승인/거부/정지 모든 액션 로그 기록
 - 누가(who), 언제(when), 무엇을(what), 왜(why)
 
@@ -385,16 +415,19 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 ## 9. 마이그레이션 계획
 
 ### Phase 1 (MVP): 기본 구조
+
 - 플랫폼 서브도메인만 지원 (`[상점].[시장].marketsphere.com`)
 - 상인회 승인 프로세스 구현
 - 기본 대시보드
 
 ### Phase 2 (V1): 독립 도메인 지원
+
 - 상인회가 독립 도메인 신청 가능
 - DNS 자동 설정 가이드
 - 프리미엄 기능 (월 50,000원)
 
 ### Phase 3 (V2): 고급 통제
+
 - 상점별 세부 권한 설정
 - 상인회별 맞춤 정책 (예: 승인 자동화)
 - 다단계 승인 워크플로우
@@ -404,16 +437,19 @@ CREATE INDEX idx_association_admins ON association_admins(association_id);
 ## 10. 검증 결과
 
 ### ✅ 잘된 점
+
 1. 데이터베이스에 `market_id` FK로 계층 구조 반영됨
 2. 서브도메인 구조 설계 (`[상점].[시장].marketsphere.com`)
 
 ### ⚠️ 개선 필요
+
 1. **상인회 테이블 누락** → `merchant_associations` 테이블 추가 필요
 2. **승인 프로세스 미정의** → `approval_status` 필드 및 API 추가 필요
 3. **권한 관리 부재** → 상인회 관리자 권한 시스템 구현 필요
 4. **도메인 소유권 불명확** → 독립 도메인 옵션 제공 검토
 
 ### 🎯 권장 조치
+
 1. **즉시 (Sprint 1)**:
    - `merchant_associations`, `association_admins` 테이블 추가
    - `stores.approval_status` 필드 추가

@@ -21,6 +21,7 @@ NEXT_PUBLIC_DEV_MODE="true"
 ```
 
 이 설정으로:
+
 - ✅ API 키 불필요
 - ✅ 데이터베이스 선택적
 - ✅ 자동 로그인
@@ -36,12 +37,15 @@ NEXT_PUBLIC_DEV_MODE="true"
 ## 🎯 바로 테스트하기
 
 ### 1단계: 대시보드 접속
+
 ```
 http://localhost:3000/merchant
 ```
+
 → 자동 로그인되어 대시보드가 보입니다
 
 ### 2단계: AI 콘텐츠 생성 테스트
+
 ```
 http://localhost:3000/merchant/products/new
 ```
@@ -53,6 +57,7 @@ http://localhost:3000/merchant/products/new
 5. 자동으로 홍보 문구 + 해시태그 생성됨!
 
 ### 3단계: 타임세일 생성
+
 ```
 http://localhost:3000/merchant/timesales/new
 ```
@@ -90,6 +95,7 @@ npm run dev
 데이터베이스를 연결하면 실제로 데이터를 저장할 수 있습니다.
 
 ### PostgreSQL 설치 (macOS)
+
 ```bash
 brew install postgresql@15
 brew services start postgresql@15
@@ -97,6 +103,7 @@ createdb marketsphere
 ```
 
 ### 데이터베이스 설정
+
 ```bash
 # .env 파일 수정
 DATABASE_URL="postgresql://localhost:5432/marketsphere"

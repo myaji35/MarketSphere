@@ -1,24 +1,24 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/hooks/use-toast'
+import { Loader2, Sparkles, Image as ImageIcon } from 'lucide-react'
 
 interface ProductFormProps {
-  storeId: string;
+  storeId: string
 }
 
 export function ProductForm({ storeId }: ProductFormProps) {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const router = useRouter()
+  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
 
   const [formData, setFormData] = useState({
     productName: '',
@@ -28,14 +28,12 @@ export function ProductForm({ storeId }: ProductFormProps) {
     aiGeneratedDescription: '',
     aiGeneratedHashtags: [] as string[],
     stock: '',
-  });
+  })
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleGenerateContent = async () => {
     if (!formData.imageUrl) {
@@ -43,11 +41,11 @@ export function ProductForm({ storeId }: ProductFormProps) {
         title: '이미지 URL을 입력해주세요',
         description: '상품 이미지 URL을 먼저 입력해야 합니다.',
         variant: 'destructive',
-      });
-      return;
+      })
+      return
     }
 
-    setIsGenerating(true);
+    setIsGenerating(true)
 
     try {
       const response = await fetch('/api/ai/generate-content', {
@@ -57,49 +55,49 @@ export function ProductForm({ storeId }: ProductFormProps) {
           imageUrl: formData.imageUrl,
           storeId,
         }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('콘텐츠 생성에 실패했습니다');
+        throw new Error('콘텐츠 생성에 실패했습니다')
       }
 
-      const result = await response.json();
+      const result = await response.json()
 
       setFormData((prev) => ({
         ...prev,
         aiGeneratedDescription: result.data.description,
         aiGeneratedHashtags: result.data.hashtags,
-      }));
+      }))
 
       toast({
         title: 'AI 콘텐츠 생성 완료!',
         description: '홍보 문구와 해시태그가 자동으로 생성되었습니다.',
-      });
+      })
     } catch (error) {
-      console.error('Error generating content:', error);
+      console.error('Error generating content:', error)
       toast({
         title: '콘텐츠 생성 실패',
         description: '잠시 후 다시 시도해주세요.',
         variant: 'destructive',
-      });
+      })
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!formData.productName || !formData.price || !formData.imageUrl) {
       toast({
         title: '필수 항목을 입력해주세요',
         description: '상품명, 가격, 이미지는 필수 항목입니다.',
         variant: 'destructive',
-      });
-      return;
+      })
+      return
     }
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
       const response = await fetch('/api/products', {
@@ -109,35 +107,33 @@ export function ProductForm({ storeId }: ProductFormProps) {
           ...formData,
           storeId,
           price: parseInt(formData.price),
-          discountPrice: formData.discountPrice
-            ? parseInt(formData.discountPrice)
-            : null,
+          discountPrice: formData.discountPrice ? parseInt(formData.discountPrice) : null,
           stock: parseInt(formData.stock) || 0,
         }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('상품 등록에 실패했습니다');
+        throw new Error('상품 등록에 실패했습니다')
       }
 
       toast({
         title: '상품 등록 완료!',
         description: '새로운 상품이 등록되었습니다.',
-      });
+      })
 
-      router.push('/merchant/products');
-      router.refresh();
+      router.push('/merchant/products')
+      router.refresh()
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error creating product:', error)
       toast({
         title: '상품 등록 실패',
         description: '잠시 후 다시 시도해주세요.',
         variant: 'destructive',
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -234,7 +230,8 @@ export function ProductForm({ storeId }: ProductFormProps) {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              상품 사진 URL을 입력한 후 'AI 생성' 버튼을 클릭하면 자동으로 홍보 문구와 해시태그가 생성됩니다.
+              상품 사진 URL을 입력한 후 &apos;AI 생성&apos; 버튼을 클릭하면 자동으로 홍보 문구와
+              해시태그가 생성됩니다.
             </p>
           </div>
 
@@ -245,7 +242,7 @@ export function ProductForm({ storeId }: ProductFormProps) {
                 alt="상품 미리보기"
                 className="max-h-48 mx-auto object-contain"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
+                  ;(e.target as HTMLImageElement).style.display = 'none'
                 }}
               />
             </div>
@@ -286,11 +283,7 @@ export function ProductForm({ storeId }: ProductFormProps) {
       </Card>
 
       <div className="flex justify-end gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-        >
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           취소
         </Button>
         <Button type="submit" disabled={isLoading}>
@@ -305,5 +298,5 @@ export function ProductForm({ storeId }: ProductFormProps) {
         </Button>
       </div>
     </form>
-  );
+  )
 }

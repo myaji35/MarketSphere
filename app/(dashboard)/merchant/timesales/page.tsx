@@ -1,18 +1,18 @@
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { Plus, Timer, Clock, TrendingDown } from 'lucide-react';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { getUserId } from '@/lib/get-user-id';
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from 'next/link'
+import { Plus, Timer, Clock, TrendingDown } from 'lucide-react'
+import { format } from 'date-fns'
+import { ko } from 'date-fns/locale'
+import { getUserId } from '@/lib/get-user-id'
 
 export default async function TimeSalesPage() {
-  const userId = await getUserId();
+  const userId = await getUserId()
 
   if (!userId) {
-    redirect('/sign-in');
+    redirect('/sign-in')
   }
 
   const store = await prisma.store.findFirst({
@@ -26,31 +26,25 @@ export default async function TimeSalesPage() {
         },
       },
     },
-  });
+  })
 
   if (!store) {
-    redirect('/merchant/store/new');
+    redirect('/merchant/store/new')
   }
 
-  const now = new Date();
+  const now = new Date()
   const activeTimeSales = store.timeSales.filter(
     (ts) => ts.isActive && ts.startTime <= now && ts.endTime >= now
-  );
-  const upcomingTimeSales = store.timeSales.filter(
-    (ts) => ts.isActive && ts.startTime > now
-  );
-  const pastTimeSales = store.timeSales.filter(
-    (ts) => !ts.isActive || ts.endTime < now
-  );
+  )
+  const upcomingTimeSales = store.timeSales.filter((ts) => ts.isActive && ts.startTime > now)
+  const pastTimeSales = store.timeSales.filter((ts) => !ts.isActive || ts.endTime < now)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">타임세일 관리</h1>
-          <p className="text-muted-foreground">
-            타임세일을 관리하고 단골 고객에게 알림을 보내세요
-          </p>
+          <p className="text-muted-foreground">타임세일을 관리하고 단골 고객에게 알림을 보내세요</p>
         </div>
         <Button asChild>
           <Link href="/merchant/timesales/new">
@@ -80,15 +74,11 @@ export default async function TimeSalesPage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {timeSale.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {timeSale.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{timeSale.description}</p>
                   )}
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4" />
-                    <span>
-                      {format(timeSale.endTime, 'M월 d일 HH:mm', { locale: ko })}까지
-                    </span>
+                    <span>{format(timeSale.endTime, 'M월 d일 HH:mm', { locale: ko })}까지</span>
                   </div>
                 </CardContent>
               </Card>
@@ -117,15 +107,11 @@ export default async function TimeSalesPage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {timeSale.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {timeSale.description}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{timeSale.description}</p>
                   )}
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="h-4 w-4" />
-                    <span>
-                      {format(timeSale.startTime, 'M월 d일 HH:mm', { locale: ko })}부터
-                    </span>
+                    <span>{format(timeSale.startTime, 'M월 d일 HH:mm', { locale: ko })}부터</span>
                   </div>
                 </CardContent>
               </Card>
@@ -155,9 +141,7 @@ export default async function TimeSalesPage() {
                 <CardContent className="space-y-2">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Clock className="h-4 w-4" />
-                    <span>
-                      {format(timeSale.endTime, 'M월 d일 HH:mm', { locale: ko })} 종료
-                    </span>
+                    <span>{format(timeSale.endTime, 'M월 d일 HH:mm', { locale: ko })} 종료</span>
                   </div>
                 </CardContent>
               </Card>
@@ -173,9 +157,7 @@ export default async function TimeSalesPage() {
             <div className="text-center space-y-4">
               <Timer className="h-16 w-16 mx-auto text-muted-foreground" />
               <div>
-                <h3 className="text-lg font-semibold">
-                  타임세일을 시작해보세요
-                </h3>
+                <h3 className="text-lg font-semibold">타임세일을 시작해보세요</h3>
                 <p className="text-sm text-muted-foreground mt-2">
                   버튼 클릭만으로 타임세일을 시작하고 단골 고객에게 알림을 보낼 수 있습니다.
                 </p>
@@ -191,5 +173,5 @@ export default async function TimeSalesPage() {
         </Card>
       )}
     </div>
-  );
+  )
 }

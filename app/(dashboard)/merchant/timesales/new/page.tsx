@@ -1,23 +1,23 @@
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { TimeSaleForm } from '@/components/forms/timesale-form';
-import { getUserId } from '@/lib/get-user-id';
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import { TimeSaleForm } from '@/components/forms/timesale-form'
+import { getUserId } from '@/lib/get-user-id'
 
 export default async function NewTimeSalePage() {
-  const userId = await getUserId();
+  const userId = await getUserId()
 
   if (!userId) {
-    redirect('/sign-in');
+    redirect('/sign-in')
   }
 
   const store = await prisma.store.findFirst({
     where: {
       ownerId: userId,
     },
-  });
+  })
 
   if (!store) {
-    redirect('/merchant/store/new');
+    redirect('/merchant/store/new')
   }
 
   return (
@@ -31,5 +31,5 @@ export default async function NewTimeSalePage() {
 
       <TimeSaleForm storeId={store.id} />
     </div>
-  );
+  )
 }

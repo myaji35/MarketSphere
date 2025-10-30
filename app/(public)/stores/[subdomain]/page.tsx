@@ -1,19 +1,19 @@
-import { notFound } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Phone, MapPin, Clock, Timer, Heart } from 'lucide-react';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+import { notFound } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Phone, MapPin, Clock, Timer, Heart } from 'lucide-react'
+import { format } from 'date-fns'
+import { ko } from 'date-fns/locale'
 
 interface StorePageProps {
   params: {
-    subdomain: string;
-  };
+    subdomain: string
+  }
 }
 
 export default async function StorePage({ params }: StorePageProps) {
-  const { subdomain } = params;
+  const { subdomain } = params
 
   // subdomain을 파싱 (예: "kimbapchunguk.mangwon" → marketId 조회 필요)
   // 간단한 구현을 위해 subdomain만으로 조회
@@ -41,20 +41,18 @@ export default async function StorePage({ params }: StorePageProps) {
         },
       },
     },
-  });
+  })
 
   if (!store) {
-    notFound();
+    notFound()
   }
 
   // 현재 진행 중인 타임세일
-  const now = new Date();
-  const activeTimeSales = store.timeSales.filter(
-    (ts) => ts.startTime <= now && ts.endTime >= now
-  );
+  const now = new Date()
+  const activeTimeSales = store.timeSales.filter((ts) => ts.startTime <= now && ts.endTime >= now)
 
   // 영업시간 파싱
-  const hours = store.hours as { open?: string; close?: string; closedDays?: string[] } | null;
+  const hours = store.hours as { open?: string; close?: string; closedDays?: string[] } | null
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -104,7 +102,11 @@ export default async function StorePage({ params }: StorePageProps) {
                   <div className="flex items-start gap-2">
                     <Clock className="h-5 w-5 mt-0.5 text-muted-foreground flex-shrink-0" />
                     <div>
-                      <div>{hours.open && hours.close ? `${hours.open} - ${hours.close}` : '영업시간 문의'}</div>
+                      <div>
+                        {hours.open && hours.close
+                          ? `${hours.open} - ${hours.close}`
+                          : '영업시간 문의'}
+                      </div>
                       {hours.closedDays && hours.closedDays.length > 0 && (
                         <div className="text-sm text-muted-foreground">
                           휴무: {hours.closedDays.join(', ')}
@@ -115,9 +117,7 @@ export default async function StorePage({ params }: StorePageProps) {
                 )}
 
                 {store.description && (
-                  <p className="text-muted-foreground pt-2">
-                    {store.description}
-                  </p>
+                  <p className="text-muted-foreground pt-2">{store.description}</p>
                 )}
               </div>
             </div>
@@ -181,9 +181,7 @@ export default async function StorePage({ params }: StorePageProps) {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-4">
-                    <CardTitle className="text-lg mb-2">
-                      {product.productName}
-                    </CardTitle>
+                    <CardTitle className="text-lg mb-2">{product.productName}</CardTitle>
 
                     <div className="flex items-center gap-2 mb-2">
                       {product.discountPrice ? (
@@ -228,5 +226,5 @@ export default async function StorePage({ params }: StorePageProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

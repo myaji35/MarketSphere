@@ -26,6 +26,7 @@
 ## Acceptance Criteria
 
 ### AC-1: Pre-push Hook 설정
+
 - [ ] Husky pre-push hook 추가
 - [ ] 전체 테스트 스위트 실행 (`npm run test`)
 - [ ] 프로덕션 빌드 검증 (`npm run build`)
@@ -33,6 +34,7 @@
 - [ ] Hook 실패 시 push 차단
 
 ### AC-2: GitHub Actions CI 워크플로우
+
 - [ ] `.github/workflows/ci.yml` 생성
 - [ ] 트리거: Pull Request (모든 브랜치 → main/develop)
 - [ ] 작업:
@@ -47,6 +49,7 @@
 - [ ] 모든 작업 통과 시 PR 머지 허용
 
 ### AC-3: GitHub Actions CD 워크플로우 (GCP 배포)
+
 - [ ] `.github/workflows/deploy.yml` 생성
 - [ ] 트리거: Push to `main` 브랜치
 - [ ] 작업:
@@ -60,12 +63,14 @@
 - [ ] 배포 성공 시 Slack 알림
 
 ### AC-4: 환경별 배포 전략
+
 - [ ] **Development**: `develop` 브랜치 → GCP Dev 환경 자동 배포
 - [ ] **Staging**: `staging` 브랜치 → GCP Staging 환경 자동 배포
 - [ ] **Production**: `main` 브랜치 → GCP Production 환경 자동 배포
 - [ ] 각 환경별 환경 변수 분리 (GitHub Secrets)
 
 ### AC-5: Pull Request 품질 게이트
+
 - [ ] PR 템플릿 생성 (`.github/pull_request_template.md`)
 - [ ] 필수 체크리스트:
   - [ ] 관련 Story/Task 번호 명시
@@ -77,6 +82,7 @@
 - [ ] CI 통과 필수
 
 ### AC-6: 배포 모니터링 및 알림
+
 - [ ] GitHub Actions 실패 시 Slack 알림
 - [ ] Cloud Run 배포 완료 시 Slack 알림
 - [ ] 배포 이력 추적 (Release Tags)
@@ -86,7 +92,9 @@
 ## Tasks / Subtasks
 
 ### Task 1: Pre-push Hook 설정 (AC: 1)
+
 - [ ] `.husky/pre-push` 파일 생성:
+
   ```bash
   #!/usr/bin/env sh
   . "$(dirname -- "$0")/_/husky.sh"
@@ -104,6 +112,7 @@
 
   echo "✅ Pre-push checks passed!"
   ```
+
 - [ ] `package.json`에 스크립트 추가:
   ```json
   {
@@ -120,7 +129,9 @@
   ```
 
 ### Task 2: GitHub Actions CI 워크플로우 (AC: 2)
+
 - [ ] `.github/workflows/ci.yml` 생성:
+
   ```yaml
   name: CI
 
@@ -173,12 +184,15 @@
             DATABASE_URL: postgresql://test:test@localhost:5432/test
             NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
   ```
+
 - [ ] GitHub Repository Settings → Branches → Branch Protection Rules:
   - [ ] Require status checks to pass before merging
   - [ ] Require branches to be up to date before merging
 
 ### Task 3: GCP 배포 워크플로우 (AC: 3)
+
 - [ ] GCP 프로젝트 설정:
+
   ```bash
   # GCP 프로젝트 생성
   gcloud projects create marketsphere-prod --name="MarketSphere Production"
@@ -190,7 +204,9 @@
   gcloud services enable artifactregistry.googleapis.com
   gcloud services enable sqladmin.googleapis.com
   ```
+
 - [ ] Workload Identity Federation 설정:
+
   ```bash
   # Service Account 생성
   gcloud iam service-accounts create github-actions \
@@ -224,7 +240,9 @@
     --role="roles/iam.workloadIdentityUser" \
     --member="principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/attribute.repository/YOUR_GITHUB_ORG/marketsphere"
   ```
+
 - [ ] `.github/workflows/deploy.yml` 생성:
+
   ```yaml
   name: Deploy to GCP
 
@@ -356,7 +374,9 @@
   ```
 
 ### Task 4: Dockerfile 생성 (AC: 3)
+
 - [ ] `Dockerfile` 생성 (프로젝트 루트):
+
   ```dockerfile
   # Build stage
   FROM node:20-alpine AS builder
@@ -400,6 +420,7 @@
 
   CMD ["node", "server.js"]
   ```
+
 - [ ] `.dockerignore` 생성:
   ```
   node_modules
@@ -415,6 +436,7 @@
   .idea
   ```
 - [ ] `next.config.js` 업데이트 (standalone output):
+
   ```javascript
   /** @type {import('next').NextConfig} */
   const nextConfig = {
@@ -425,16 +447,21 @@
   ```
 
 ### Task 5: PR 템플릿 생성 (AC: 5)
+
 - [ ] `.github/pull_request_template.md` 생성:
+
   ```markdown
   ## 관련 Story/Task
+
   - Story: US-X.X
   - Task: #issue-number
 
   ## 변경 사항 요약
+
   <!-- 이 PR에서 변경된 내용을 간략히 설명해주세요 -->
 
   ## 변경 타입
+
   - [ ] 🎨 Feature (새 기능)
   - [ ] 🐛 Bug Fix (버그 수정)
   - [ ] 🔨 Refactor (리팩토링)
@@ -444,25 +471,30 @@
   - [ ] 🚀 Performance (성능 개선)
 
   ## 테스트
+
   - [ ] 단위 테스트 작성 및 통과
   - [ ] E2E 테스트 작성 및 통과 (필요 시)
   - [ ] 테스트 커버리지 80% 이상 유지
   - [ ] 수동 테스트 완료
 
   ## Breaking Changes
+
   - [ ] Yes (하위 호환성 깨짐)
   - [ ] No
 
   <!-- Breaking Changes가 있다면 설명해주세요 -->
 
   ## 스크린샷 (UI 변경 시)
+
   <!-- UI 변경이 있다면 Before/After 스크린샷을 첨부해주세요 -->
 
   ## 추가 정보
+
   <!-- 리뷰어가 알아야 할 추가 정보가 있다면 작성해주세요 -->
   ```
 
 ### Task 6: GitHub Secrets 설정 (AC: 3, 4)
+
 - [ ] GitHub Repository Settings → Secrets and variables → Actions → New repository secret:
   - [ ] `GCP_WORKLOAD_IDENTITY_PROVIDER`
   - [ ] `GCP_SERVICE_ACCOUNT`
@@ -482,27 +514,33 @@
 ## Dev Notes
 
 ### Previous Story Context
+
 [Source: US-0.0, US-0.0.5]
 
 **US-0.0에서 완료된 항목**:
+
 - ✅ Git 초기화
 - ✅ Next.js 프로젝트 구조
 - ✅ Prisma 설정
 
 **US-0.0.5에서 완료된 항목**:
+
 - ✅ Pre-commit Hook (ESLint + Prettier)
 - ✅ 테스트 프레임워크 (Vitest + Playwright)
 
 **US-0.0.6에서 추가되는 항목**:
+
 - Pre-push Hook (테스트 + 빌드)
 - GitHub Actions CI/CD
 - GCP 배포 자동화
 - PR 템플릿 및 품질 게이트
 
 ### Tech Stack
+
 [Source: tech-stack.md, Sprint Change Proposal]
 
 **배포 인프라**:
+
 - **Cloud Platform**: Google Cloud Platform (GCP)
 - **Container Registry**: Artifact Registry
 - **Compute**: Cloud Run (컨테이너 기반)
@@ -511,9 +549,11 @@
 - **CI/CD**: GitHub Actions
 
 **이전 계획 (변경됨)**:
+
 - ~~Vercel 배포~~ → GCP Cloud Run 배포로 변경 (Sprint Change Proposal 승인)
 
 ### GCP Architecture
+
 [Source: Sprint Change Proposal, Architecture Plan]
 
 ```
@@ -554,9 +594,11 @@
 ```
 
 ### CI/CD Pipeline Flow
+
 [Source: GitHub Actions Best Practices]
 
 **Pull Request Flow**:
+
 ```
 1. Developer creates PR
    ↓
@@ -575,6 +617,7 @@
 ```
 
 **Deployment Flow**:
+
 ```
 1. Code merged to main
    ↓
@@ -595,9 +638,11 @@
 ```
 
 ### Environment Variables
+
 [Source: US-0.0, tech-stack.md]
 
 **GitHub Secrets 구조**:
+
 ```
 Repository Secrets (공통):
 - GCP_WORKLOAD_IDENTITY_PROVIDER
@@ -624,9 +669,11 @@ Production:
 ```
 
 ### GCP Cost Estimation
+
 [Source: GCP Pricing, Sprint Change Proposal]
 
 **월 예상 비용**:
+
 - Cloud Run: ~$20-50 (트래픽에 따라)
 - Cloud SQL: ~$50-100 (db-custom-2-8192)
 - Artifact Registry: ~$5-10
@@ -634,31 +681,38 @@ Production:
 - **Total**: ~$75-160/월
 
 **무료 티어**:
+
 - Cloud Run: 월 2백만 요청 무료
 - Artifact Registry: 0.5GB 무료
 
 ### Security Best Practices
+
 [Source: GCP Security Best Practices]
 
 **Workload Identity Federation**:
+
 - ❌ Service Account Key 파일 사용 X (보안 위험)
 - ✅ Workload Identity Federation 사용 (권장)
 - GitHub Actions가 GCP에 keyless 인증
 
 **Secrets 관리**:
+
 - ❌ `.env` 파일 Git 커밋 금지
 - ✅ GitHub Secrets 사용
 - ✅ GCP Secret Manager 사용 (선택)
 
 ### Deployment Strategy
+
 [Source: Cloud Run Best Practices]
 
 **Zero-downtime Deployment**:
+
 - Cloud Run은 기본적으로 Blue/Green 배포
 - 새 버전 배포 → 헬스 체크 통과 → 트래픽 전환
 - 이전 버전 자동 종료 (gradual rollout)
 
 **Rollback 전략**:
+
 ```bash
 # 이전 버전으로 롤백
 gcloud run services update-traffic marketsphere-api \
@@ -667,9 +721,11 @@ gcloud run services update-traffic marketsphere-api \
 ```
 
 ### Testing Standards
+
 [Source: US-0.0.5, Testing Standards]
 
 **CI에서 실행되는 테스트**:
+
 1. **Lint**: `npm run lint`
 2. **Type Check**: `npm run type-check`
 3. **Unit Tests**: `npm run test` (Vitest)
@@ -677,19 +733,23 @@ gcloud run services update-traffic marketsphere-api \
 5. **Build**: `npm run build`
 
 **커버리지 요구사항**:
+
 - Lines: 80% 이상
 - Functions: 80% 이상
 - Branches: 80% 이상
 - Statements: 80% 이상
 
 **E2E 테스트 전략**:
+
 - CI에서는 Chromium 브라우저만 실행 (빠른 피드백)
 - 로컬에서는 모든 브라우저 테스트 (Firefox, WebKit)
 
 ### Health Check API
+
 [Source: US-0.0.5, API Testing]
 
 **Health Check Route** (이미 구현됨):
+
 ```typescript
 // app/api/health/route.ts
 import { NextResponse } from 'next/server'
@@ -703,6 +763,7 @@ export async function GET() {
 ```
 
 **Cloud Run Health Check 설정**:
+
 ```bash
 gcloud run services update marketsphere-api \
   --region=asia-northeast3 \
@@ -714,34 +775,34 @@ gcloud run services update marketsphere-api \
 
 ## Change Log
 
-| Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-10-29 | 1.0 | Initial story creation for CI/CD pipeline | Bob (Scrum Master) |
+| Date       | Version | Description                               | Author             |
+| ---------- | ------- | ----------------------------------------- | ------------------ |
+| 2025-10-29 | 1.0     | Initial story creation for CI/CD pipeline | Bob (Scrum Master) |
 
 ---
 
 ## Dev Agent Record
 
-*(이 섹션은 개발 에이전트가 구현 중 작성합니다)*
+_(이 섹션은 개발 에이전트가 구현 중 작성합니다)_
 
 ### Agent Model Used
 
-*(개발 에이전트가 기록)*
+_(개발 에이전트가 기록)_
 
 ### Debug Log References
 
-*(개발 에이전트가 기록)*
+_(개발 에이전트가 기록)_
 
 ### Completion Notes List
 
-*(개발 에이전트가 기록)*
+_(개발 에이전트가 기록)_
 
 ### File List
 
-*(개발 에이전트가 기록)*
+_(개발 에이전트가 기록)_
 
 ---
 
 ## QA Results
 
-*(이 섹션은 QA 에이전트가 검증 후 작성합니다)*
+_(이 섹션은 QA 에이전트가 검증 후 작성합니다)_

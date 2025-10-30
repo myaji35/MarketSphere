@@ -139,6 +139,7 @@ vercel --prod
 ### 환경 변수 설정
 
 Vercel Dashboard에서 다음 환경 변수 설정:
+
 - `DATABASE_URL`
 - `NEXTAUTH_SECRET`
 - `NEXTAUTH_URL`

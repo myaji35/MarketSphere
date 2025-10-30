@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -12,14 +12,46 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function generateSubdomain(koreanText: string): string {
   const romanization: { [key: string]: string } = {
-    'ㄱ': 'g', 'ㄴ': 'n', 'ㄷ': 'd', 'ㄹ': 'r', 'ㅁ': 'm',
-    'ㅂ': 'b', 'ㅅ': 's', 'ㅇ': '', 'ㅈ': 'j', 'ㅊ': 'ch',
-    'ㅋ': 'k', 'ㅌ': 't', 'ㅍ': 'p', 'ㅎ': 'h',
-    'ㄲ': 'kk', 'ㄸ': 'tt', 'ㅃ': 'pp', 'ㅆ': 'ss', 'ㅉ': 'jj',
-    'ㅏ': 'a', 'ㅑ': 'ya', 'ㅓ': 'eo', 'ㅕ': 'yeo', 'ㅗ': 'o',
-    'ㅛ': 'yo', 'ㅜ': 'u', 'ㅠ': 'yu', 'ㅡ': 'eu', 'ㅣ': 'i',
-    'ㅐ': 'ae', 'ㅒ': 'yae', 'ㅔ': 'e', 'ㅖ': 'ye',
-    'ㅘ': 'wa', 'ㅙ': 'wae', 'ㅚ': 'oe', 'ㅝ': 'wo', 'ㅞ': 'we', 'ㅟ': 'wi', 'ㅢ': 'ui'
+    ㄱ: 'g',
+    ㄴ: 'n',
+    ㄷ: 'd',
+    ㄹ: 'r',
+    ㅁ: 'm',
+    ㅂ: 'b',
+    ㅅ: 's',
+    ㅇ: '',
+    ㅈ: 'j',
+    ㅊ: 'ch',
+    ㅋ: 'k',
+    ㅌ: 't',
+    ㅍ: 'p',
+    ㅎ: 'h',
+    ㄲ: 'kk',
+    ㄸ: 'tt',
+    ㅃ: 'pp',
+    ㅆ: 'ss',
+    ㅉ: 'jj',
+    ㅏ: 'a',
+    ㅑ: 'ya',
+    ㅓ: 'eo',
+    ㅕ: 'yeo',
+    ㅗ: 'o',
+    ㅛ: 'yo',
+    ㅜ: 'u',
+    ㅠ: 'yu',
+    ㅡ: 'eu',
+    ㅣ: 'i',
+    ㅐ: 'ae',
+    ㅒ: 'yae',
+    ㅔ: 'e',
+    ㅖ: 'ye',
+    ㅘ: 'wa',
+    ㅙ: 'wae',
+    ㅚ: 'oe',
+    ㅝ: 'wo',
+    ㅞ: 'we',
+    ㅟ: 'wi',
+    ㅢ: 'ui',
   }
 
   let result = ''
@@ -27,20 +59,91 @@ export function generateSubdomain(koreanText: string): string {
     const char = koreanText[i]
     const code = char.charCodeAt(0)
 
-    if (code >= 0xAC00 && code <= 0xD7A3) {
+    if (code >= 0xac00 && code <= 0xd7a3) {
       // 한글 유니코드 범위
-      const index = code - 0xAC00
+      const index = code - 0xac00
       const cho = Math.floor(index / 588)
       const jung = Math.floor((index % 588) / 28)
       const jong = index % 28
 
-      const choList = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
-      const jungList = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ']
+      const choList = [
+        'ㄱ',
+        'ㄲ',
+        'ㄴ',
+        'ㄷ',
+        'ㄸ',
+        'ㄹ',
+        'ㅁ',
+        'ㅂ',
+        'ㅃ',
+        'ㅅ',
+        'ㅆ',
+        'ㅇ',
+        'ㅈ',
+        'ㅉ',
+        'ㅊ',
+        'ㅋ',
+        'ㅌ',
+        'ㅍ',
+        'ㅎ',
+      ]
+      const jungList = [
+        'ㅏ',
+        'ㅐ',
+        'ㅑ',
+        'ㅒ',
+        'ㅓ',
+        'ㅔ',
+        'ㅕ',
+        'ㅖ',
+        'ㅗ',
+        'ㅘ',
+        'ㅙ',
+        'ㅚ',
+        'ㅛ',
+        'ㅜ',
+        'ㅝ',
+        'ㅞ',
+        'ㅟ',
+        'ㅠ',
+        'ㅡ',
+        'ㅢ',
+        'ㅣ',
+      ]
 
       result += romanization[choList[cho]] || choList[cho]
       result += romanization[jungList[jung]] || jungList[jung]
       if (jong > 0) {
-        const jongList = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+        const jongList = [
+          '',
+          'ㄱ',
+          'ㄲ',
+          'ㄳ',
+          'ㄴ',
+          'ㄵ',
+          'ㄶ',
+          'ㄷ',
+          'ㄹ',
+          'ㄺ',
+          'ㄻ',
+          'ㄼ',
+          'ㄽ',
+          'ㄾ',
+          'ㄿ',
+          'ㅀ',
+          'ㅁ',
+          'ㅂ',
+          'ㅄ',
+          'ㅅ',
+          'ㅆ',
+          'ㅇ',
+          'ㅈ',
+          'ㅊ',
+          'ㅋ',
+          'ㅌ',
+          'ㅍ',
+          'ㅎ',
+        ]
         result += romanization[jongList[jong]] || jongList[jong]
       }
     } else {

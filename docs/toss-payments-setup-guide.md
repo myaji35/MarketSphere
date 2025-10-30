@@ -19,10 +19,12 @@
 ### 테스트 모드 (개발)
 
 **대시보드 → API 키**에서:
+
 - **클라이언트 키** (공개키): `test_ck_...`
 - **시크릿 키** (비밀키): `test_sk_...`
 
 `.env.local`에 추가:
+
 ```bash
 NEXT_PUBLIC_TOSS_CLIENT_KEY="test_ck_..."
 TOSS_SECRET_KEY="test_sk_..."
@@ -31,6 +33,7 @@ TOSS_SECRET_KEY="test_sk_..."
 ### 실제 운영 모드
 
 사업자 등록 후 실제 계약 체결:
+
 - 실 클라이언트 키: `live_ck_...`
 - 실 시크릿 키: `live_sk_...`
 
@@ -38,9 +41,9 @@ TOSS_SECRET_KEY="test_sk_..."
 
 ## 3. 구독 플랜 정의
 
-| 플랜 | 가격 | 주요 기능 |
-|------|------|----------|
-| **기본** | 월 10,000원 | AI 콘텐츠 생성, 푸시 알림, 기본 챗봇, 월 100건 AI 생성 |
+| 플랜         | 가격        | 주요 기능                                                 |
+| ------------ | ----------- | --------------------------------------------------------- |
+| **기본**     | 월 10,000원 | AI 콘텐츠 생성, 푸시 알림, 기본 챗봇, 월 100건 AI 생성    |
 | **프리미엄** | 월 20,000원 | 기본 + 고급 AI, 광고 자동 집행, 무제한 AI 생성, 우선 지원 |
 
 ---
@@ -258,10 +261,12 @@ export async function processBillingCycle() {
 ### 대안: 외부 Cron 서비스
 
 무료 옵션:
+
 - **cron-job.org** (무료)
 - **EasyCron** (무료 티어)
 
 설정:
+
 ```
 URL: https://your-domain.com/api/cron/billing
 Method: GET
@@ -278,6 +283,7 @@ Schedule: 0 9 * * * (매일 오전 9시)
 **Webhook URL**: `https://your-domain.com/api/webhooks/toss`
 
 **이벤트**:
+
 - ✅ `PAYMENT_CONFIRMED` (결제 승인)
 - ✅ `PAYMENT_CANCELLED` (결제 취소)
 
@@ -287,9 +293,9 @@ Schedule: 0 9 * * * (매일 오전 9시)
 
 ## 9. 테스트 카드 번호 (개발 모드)
 
-| 카드사 | 카드 번호 | 결과 |
-|--------|----------|------|
-| 성공 | `5294-0100-0000-0003` | 결제 성공 |
+| 카드사           | 카드 번호             | 결과      |
+| ---------------- | --------------------- | --------- |
+| 성공             | `5294-0100-0000-0003` | 결제 성공 |
 | 실패 (잔액 부족) | `5294-0100-0000-0011` | 결제 실패 |
 | 실패 (한도 초과) | `5294-0100-0000-0029` | 결제 실패 |
 
@@ -301,11 +307,13 @@ Schedule: 0 9 * * * (매일 오전 9시)
 ## 10. 보안 고려사항
 
 ### 10.1. 시크릿 키 보호
+
 - `.env.local`에만 저장 (Git 커밋 금지)
 - Vercel 환경 변수에만 설정
 - 클라이언트에서 절대 노출 금지
 
 ### 10.2. Cron Job 보안
+
 ```typescript
 const authHeader = request.headers.get('authorization')
 const CRON_SECRET = process.env.CRON_SECRET
@@ -316,6 +324,7 @@ if (authHeader !== `Bearer ${CRON_SECRET}`) {
 ```
 
 ### 10.3. Webhook 검증
+
 토스페이먼츠는 Webhook 서명 검증 제공 (선택 구현)
 
 ---

@@ -32,6 +32,7 @@
 ## 2. Frontend 기술 스택
 
 ### 2.1. Core Framework
+
 - **Next.js 14+** (App Router)
   - React 18 Server Components
   - Server Actions for mutations
@@ -40,6 +41,7 @@
   - SEO 최적화
 
 ### 2.2. Styling
+
 - **Tailwind CSS 3+**
   - Utility-first CSS
   - 반응형 디자인
@@ -50,29 +52,34 @@
   - 커스터마이징 용이
 
 ### 2.3. Language
+
 - **TypeScript 5+**
   - 타입 안정성
   - 자동완성 및 IntelliSense
   - 런타임 에러 방지
 
 ### 2.4. State Management
+
 - **React Context API** (전역 상태)
 - **Zustand** (선택적, 복잡한 상태 관리 시)
 - **Server State**: TanStack Query (React Query)
 
 ### 2.5. Form Handling
+
 - **React Hook Form**
 - **Zod** (스키마 검증)
 
 ### 2.6. UI Components (shadcn/ui)
 
 **shadcn/ui MCP 서버 설치** (권장):
+
 ```bash
 # Claude Code에서 shadcn/ui MCP 서버 설치
 # .claude/config.json에 MCP 서버 추가 후
 ```
 
 **수동 설치**:
+
 ```bash
 npx shadcn-ui@latest init
 npx shadcn-ui@latest add button
@@ -95,12 +102,14 @@ npx shadcn-ui@latest add avatar
 ## 3. Backend 기술 스택
 
 ### 3.1. Runtime & Framework
+
 - **Next.js 14+ API Routes**
   - `app/api/v1/**` 구조
   - Server Actions for mutations
   - Edge Runtime 지원
 
 ### 3.2. Authentication
+
 - **Clerk**
   - Providers:
     - Email/Password
@@ -113,12 +122,14 @@ npx shadcn-ui@latest add avatar
   - 사전 제작된 UI 컴포넌트 제공
 
 ### 3.3. ORM
+
 - **Prisma**
   - Type-safe database queries
   - 자동 마이그레이션
   - Prisma Studio (GUI)
 
 ### 3.4. Database
+
 - **PostgreSQL 15+**
   - 호스팅 옵션:
     - **Supabase** (추천: 무료 티어, 실시간 기능)
@@ -129,16 +140,19 @@ npx shadcn-ui@latest add avatar
     - `pg_trgm` (텍스트 검색)
 
 ### 3.5. File Storage
+
 - **AWS S3** 또는 **Supabase Storage**
   - 상품 이미지 업로드
   - CDN 연동
 
 ### 3.6. AI Services
+
 - **OpenAI API** (GPT-4, Vision)
 - **Claude API** (백업)
 - **Langchain** (AI 오케스트레이션)
 
 ### 3.7. Push Notifications
+
 - **Firebase Cloud Messaging (FCM)**
 - **Web Push API**
 
@@ -149,6 +163,7 @@ npx shadcn-ui@latest add avatar
 ### 4.1. Prisma 설정
 
 **prisma/schema.prisma**:
+
 ```prisma
 generator client {
   provider = "prisma-client-js"
@@ -410,6 +425,7 @@ marketsphere/
 ### 6.1. 필수 환경 변수
 
 **.env.local**:
+
 ```bash
 # Database
 DATABASE_URL="postgresql://user:password@localhost:5432/marketsphere"
@@ -551,6 +567,7 @@ npm run dev
 ## 8. 배포 환경
 
 ### 8.1. 호스팅
+
 - **Vercel** (추천)
   - Next.js 최적화
   - 자동 배포 (GitHub 연동)
@@ -558,6 +575,7 @@ npm run dev
   - Vercel Postgres 통합
 
 ### 8.2. 데이터베이스
+
 - **Supabase** (추천)
   - PostgreSQL 호스팅
   - 실시간 기능
@@ -565,6 +583,7 @@ npm run dev
   - 무료 티어 (500MB)
 
 ### 8.3. CI/CD
+
 - **GitHub Actions**
   - 자동 테스트
   - Vercel 배포
@@ -575,17 +594,20 @@ npm run dev
 ## 9. 성능 최적화
 
 ### 9.1. Next.js 최적화
+
 - Server Components 활용 (기본값)
 - Dynamic Import (코드 스플리팅)
 - Image Optimization (`next/image`)
 - Font Optimization (`next/font`)
 
 ### 9.2. 데이터베이스 최적화
+
 - Prisma Connection Pooling
 - 인덱스 최적화
 - 쿼리 최적화 (N+1 문제 해결)
 
 ### 9.3. 캐싱
+
 - React Query (클라이언트 캐싱)
 - Next.js Data Cache (서버 캐싱)
 - Redis (선택적)
@@ -595,16 +617,19 @@ npm run dev
 ## 10. 보안
 
 ### 10.1. Authentication
+
 - NextAuth.js (세션 관리)
 - JWT 토큰 암호화
 - CSRF 보호
 
 ### 10.2. Authorization
+
 - Role-based access control (RBAC)
 - API route 권한 검증
 - Server Actions 권한 검증
 
 ### 10.3. Data Validation
+
 - Zod 스키마 검증 (클라이언트 + 서버)
 - SQL Injection 방지 (Prisma ORM)
 - XSS 방지 (React 기본 제공)

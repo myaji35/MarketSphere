@@ -1,4 +1,4 @@
-"use server"
+'use server'
 
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
@@ -167,10 +167,7 @@ export async function getCurrentSubscription() {
 /**
  * 구독 플랜 변경
  */
-export async function changeSubscriptionPlan(
-  subscriptionId: string,
-  newPlan: 'BASIC' | 'PREMIUM'
-) {
+export async function changeSubscriptionPlan(subscriptionId: string, newPlan: 'BASIC' | 'PREMIUM') {
   const { userId } = auth()
   if (!userId) throw new Error('Unauthorized')
 

@@ -22,6 +22,7 @@
 ## Acceptance Criteria
 
 ### AC-1: 기본 정보 입력 폼
+
 - [ ] 상점명 입력 필드 (필수, 2~30자)
 - [ ] 업종 선택 드롭다운 (청과, 정육, 수산, 반찬 등 15개 카테고리)
 - [ ] 위치 정보 입력 (시장명 선택 + 상점 위치)
@@ -30,6 +31,7 @@
 - [ ] 상점 대표 사진 업로드 (선택)
 
 ### AC-2: 자동 서브도메인 생성
+
 - [ ] 입력한 상점명 기반 서브도메인 자동 생성
   - 예: "김밥천국" 입력 → `김밥천국.망원시장.marketsphere.com`
 - [ ] 한글 → 영문 자동 변환 (김밥천국 → kimbapchunguk)
@@ -37,6 +39,7 @@
 - [ ] 서브도메인 미리보기 표시
 
 ### AC-3: 가입 신청 완료
+
 - [ ] 입력 완료 후 "가입 신청" 버튼 클릭
 - [ ] 3초 이내 신청 완료
 - [ ] 생성 예정 페이지 URL 표시 (예: `kimbapchunguk.mangwon.marketsphere.com`)
@@ -47,6 +50,7 @@
 - [ ] 승인 상태: `pending` (대기 중)
 
 ### AC-4: 상인회 승인 후 페이지 활성화
+
 - [ ] 상인회 관리자가 상점 승인
 - [ ] 승인 상태: `pending` → `approved`
 - [ ] 상점주에게 푸시 알림 발송
@@ -54,12 +58,14 @@
 - [ ] 상점주 대시보드에 "승인 완료" 배지 표시
 
 ### AC-5: 모바일 최적화
+
 - [ ] 모바일 화면에서 입력 폼 정상 작동
 - [ ] 키보드 자동 올라오기 (입력 필드 선택 시)
 - [ ] 큰 버튼 (최소 44x44px)
 - [ ] 세로 스크롤로 모든 필드 접근 가능
 
 ### AC-6: 설정 시간 목표
+
 - [ ] 전체 입력 프로세스 5분 이내 완료 가능
 - [ ] 필수 필드만 입력 시 2분 이내 완료
 - [ ] 진행률 표시 (1/5, 2/5... 완료)
@@ -69,6 +75,7 @@
 ## Technical Notes
 
 ### Frontend
+
 - **Framework**: Next.js 14+ (App Router) + TypeScript
 - **Styling**: Tailwind CSS 3+
 - **UI Components**: shadcn/ui (Radix UI 기반)
@@ -81,23 +88,32 @@
   - 자동 저장 (페이지 이탈 시 복구 가능)
 
 **UI 컴포넌트 예시**:
+
 ```tsx
 // components/forms/store-registration-form.tsx
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 
 const storeSchema = z.object({
-  storeName: z.string().min(2, "상점명은 2자 이상이어야 합니다").max(30),
-  phone: z.string().regex(/^010-\d{4}-\d{4}$/, "올바른 전화번호 형식이 아닙니다"),
+  storeName: z.string().min(2, '상점명은 2자 이상이어야 합니다').max(30),
+  phone: z.string().regex(/^010-\d{4}-\d{4}$/, '올바른 전화번호 형식이 아닙니다'),
   // ...
 })
 ```
 
 ### Backend
+
 - **Framework**: Next.js 14+ API Routes
 - **Authentication**: NextAuth.js v5
 - **Database**: PostgreSQL 15+ (Supabase / Vercel Postgres)
@@ -105,34 +121,36 @@ const storeSchema = z.object({
 - **API Endpoint**: `POST /app/api/v1/stores/route.ts`
 
 **Server Action 예시** (권장):
+
 ```typescript
 // app/actions/store-actions.ts
-"use server"
+'use server'
 
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
-import { revalidatePath } from "next/cache"
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
 
 export async function createStore(data: CreateStoreInput) {
   const session = await auth()
-  if (!session) throw new Error("Unauthorized")
+  if (!session) throw new Error('Unauthorized')
 
   const store = await prisma.store.create({
     data: {
       storeName: data.storeName,
       marketId: data.marketId,
       subdomain: generateSubdomain(data.storeName),
-      approvalStatus: "PENDING",
+      approvalStatus: 'PENDING',
       // ...
     },
   })
 
-  revalidatePath("/dashboard/stores")
+  revalidatePath('/dashboard/stores')
   return { success: true, storeId: store.id }
 }
 ```
 
 - **Request Body**:
+
 ```json
 {
   "storeName": "김밥천국",
@@ -150,6 +168,7 @@ export async function createStore(data: CreateStoreInput) {
 ```
 
 - **Response**:
+
 ```json
 {
   "storeId": "store-uuid-1234",
@@ -165,6 +184,7 @@ export async function createStore(data: CreateStoreInput) {
 ### Database Schema
 
 **merchant_associations 테이블**:
+
 ```sql
 CREATE TABLE merchant_associations (
   association_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -176,6 +196,7 @@ CREATE TABLE merchant_associations (
 ```
 
 **markets 테이블**:
+
 ```sql
 CREATE TABLE markets (
   market_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -189,6 +210,7 @@ CREATE TABLE markets (
 ```
 
 **stores 테이블** (승인 프로세스 추가):
+
 ```sql
 CREATE TABLE stores (
   store_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -221,9 +243,10 @@ CREATE INDEX idx_stores_approval_status ON stores(approval_status);
 ```
 
 **full_domain 계산 로직** (애플리케이션 레벨):
+
 ```javascript
 function getFullDomain(store, market) {
-  return `${store.subdomain}.${market.subdomain_prefix}.marketsphere.com`;
+  return `${store.subdomain}.${market.subdomain_prefix}.marketsphere.com`
 }
 // 예: kimbapchunguk.mangwon.marketsphere.com
 ```
@@ -233,13 +256,15 @@ function getFullDomain(store, market) {
 ## Dependencies
 
 ### Must Have Before This Story
+
 - [ ] 상인회(Merchant Association) 데이터베이스 설정 완료
 - [ ] 시장(Market) 데이터베이스 설정 완료 (association_id 포함)
 - [ ] 업종 카테고리 마스터 데이터 입력
 - [ ] S3 이미지 업로드 기능 구현
-- [ ] 서브도메인 DNS 설정 (와일드카드 *.marketsphere.com)
+- [ ] 서브도메인 DNS 설정 (와일드카드 \*.marketsphere.com)
 
 ### Blockers
+
 - 없음
 
 ---
@@ -247,23 +272,27 @@ function getFullDomain(store, market) {
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] 서브도메인 생성 로직 (한글 → 영문 변환)
 - [ ] 중복 서브도메인 처리
 - [ ] 전화번호 유효성 검사
 - [ ] 영업시간 형식 검증
 
 ### Integration Tests
+
 - [ ] 상점 가입 신청 API 정상 작동
 - [ ] 데이터베이스 저장 확인 (approval_status = 'pending')
 - [ ] 승인 전 페이지 접속 시 "승인 대기 중" 메시지 표시
 - [ ] 승인 후 서브도메인 접속 가능 확인
 
 ### E2E Tests
+
 - [ ] 신규 사용자 온보딩 플로우 (가입 → 상점 생성 → 페이지 확인)
 - [ ] 모바일 기기에서 전체 프로세스 테스트 (iOS, Android)
 - [ ] 5분 이내 완료 시나리오 검증
 
 ### UX Tests
+
 - [ ] 소상공인 5명 대상 사용성 테스트
 - [ ] 평균 완료 시간 측정 (목표: 5분 이내)
 - [ ] 만족도 설문 (목표: 4.0/5.0 이상)
@@ -286,6 +315,7 @@ function getFullDomain(store, market) {
 ## Notes
 
 ### 참고 사항
+
 - 네이버 스마트스토어는 초기 설정에 평균 30분 소요
 - 우리는 5분 목표 → **6배 빠른 온보딩**
 - 복잡한 결제/배송 설정 없음 (오프라인 거래 전제)
@@ -295,6 +325,7 @@ function getFullDomain(store, market) {
   - 거부 사유: 시장 비소속, 중복 가입, 정보 불충분
 
 ### 향후 개선 사항 (V2)
+
 - 음성 입력 기능 (영업시간 등)
 - QR 코드로 위치 자동 입력
 - 상점 템플릿 선택 (업종별 최적화)

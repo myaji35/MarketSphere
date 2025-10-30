@@ -1,14 +1,14 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
-import "./globals.css"
-import { Toaster } from "@/components/ui/toaster"
+import './globals.css'
+import { Toaster } from '@/components/ui/toaster'
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "MarketSphere - 전통시장 디지털 혁신 플랫폼",
-  description: "AI 기반 전통시장 소상공인 마케팅 자동화 플랫폼",
+  title: 'MarketSphere - 전통시장 디지털 혁신 플랫폼',
+  description: 'AI 기반 전통시장 소상공인 마케팅 자동화 플랫폼',
 }
 
 const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true'

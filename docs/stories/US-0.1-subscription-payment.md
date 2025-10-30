@@ -20,6 +20,7 @@
 ## Acceptance Criteria
 
 ### AC-1: 구독 플랜 선택
+
 - [ ] 구독 플랜 선택 페이지 제공
   - 기본: 월 10,000원
   - 프리미엄: 월 20,000원
@@ -27,6 +28,7 @@
 - [ ] "구독 시작" 버튼
 
 ### AC-2: 결제 정보 입력 (빌링키 발급)
+
 - [ ] 토스페이먼츠 결제 위젯 표시
 - [ ] 카드 정보 입력:
   - 카드 번호
@@ -36,6 +38,7 @@
 - [ ] 개인정보 수집 동의 체크박스
 
 ### AC-3: 첫 결제 및 구독 시작
+
 - [ ] 카드 인증 완료 후 빌링키 발급
 - [ ] 즉시 첫 달 결제 실행
 - [ ] **처리 시간**: 5초 이내
@@ -48,6 +51,7 @@
   - 다시 시도 버튼
 
 ### AC-4: 구독 관리 대시보드
+
 - [ ] 현재 구독 정보 표시:
   - 플랜 이름 (기본/프리미엄)
   - 월 결제 금액
@@ -58,6 +62,7 @@
 - [ ] 구독 취소 버튼
 
 ### AC-5: 정기 결제 (자동)
+
 - [ ] 매월 결제일에 자동 결제
 - [ ] Cron Job 실행 (매일 오전 9시)
 - [ ] 결제 성공 시:
@@ -70,6 +75,7 @@
   - 결제 실패 알림 (이메일 + 푸시)
 
 ### AC-6: 구독 취소
+
 - [ ] "구독 취소" 버튼 클릭
 - [ ] 취소 사유 입력 (선택)
 - [ ] 확인 팝업 표시
@@ -86,9 +92,10 @@
 ### Frontend (Next.js 14+)
 
 **구독 플랜 선택 페이지**:
+
 ```tsx
 // app/(dashboard)/subscription/plans/page.tsx
-"use client"
+'use client'
 
 import { SUBSCRIPTION_PLANS } from '@/lib/toss'
 import { Button } from '@/components/ui/button'
@@ -104,9 +111,10 @@ export default function PlansPage() {
 ```
 
 **결제 위젯**:
+
 ```tsx
 // app/(dashboard)/subscription/checkout/page.tsx
-"use client"
+'use client'
 
 import { useEffect, useRef } from 'react'
 import { loadPaymentWidget } from '@tosspayments/payment-widget-sdk'
@@ -142,6 +150,7 @@ export default function CheckoutPage() {
 ### Backend (Server Actions)
 
 **app/actions/subscription-actions.ts** (이미 구현됨):
+
 - `createSubscription()` - 구독 생성 및 첫 결제
 - `cancelSubscription()` - 구독 취소
 - `changeSubscriptionPlan()` - 플랜 변경
@@ -151,6 +160,7 @@ export default function CheckoutPage() {
 ### Cron Job
 
 **Vercel Cron** (vercel.json):
+
 ```json
 {
   "crons": [
@@ -169,12 +179,14 @@ export default function CheckoutPage() {
 ## Dependencies
 
 ### Must Have Before This Story
+
 - [ ] 토스페이먼츠 계정 생성 및 API 키 발급
 - [ ] Prisma Subscription, Payment 테이블 마이그레이션 완료
 - [ ] Clerk 인증 구현 (userId 필요)
 - [ ] 이메일 발송 시스템 (영수증, 알림)
 
 ### External Dependencies
+
 - [ ] 토스페이먼츠 API
 - [ ] Vercel Cron (또는 외부 Cron 서비스)
 
@@ -183,24 +195,28 @@ export default function CheckoutPage() {
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] `issueBillingKey()` 함수 테스트 (모킹)
 - [ ] `chargeBilling()` 함수 테스트
 - [ ] `createSubscription()` Server Action 테스트
 - [ ] 가격 계산 로직 테스트
 
 ### Integration Tests
+
 - [ ] 전체 구독 플로우 (플랜 선택 → 결제 → 활성화)
 - [ ] 토스페이먼츠 API 실제 호출 (테스트 모드)
 - [ ] 정기 결제 Cron Job 테스트
 - [ ] 구독 취소 플로우
 
 ### E2E Tests
+
 - [ ] 실제 브라우저에서 구독 시작 (테스트 카드)
 - [ ] 결제 성공/실패 시나리오
 - [ ] 구독 관리 페이지 접근
 - [ ] 구독 취소 플로우
 
 ### Security Tests
+
 - [ ] 시크릿 키 노출 여부 확인 (클라이언트)
 - [ ] Cron Job Authorization 헤더 검증
 - [ ] Webhook 서명 검증 (선택)
@@ -224,12 +240,14 @@ export default function CheckoutPage() {
 ## Success Metrics
 
 ### 정량적 지표
+
 - 구독 전환율: 30% 이상 (가입 → 유료 전환)
 - 결제 성공률: 95% 이상
 - Cron Job 실행 성공률: 99% 이상
 - 구독 유지율: 월 85% 이상
 
 ### 정성적 지표
+
 - "결제가 간편했다" 피드백
 - "자동 갱신이 편리하다" 만족도
 - 결제 문의 감소
@@ -239,25 +257,31 @@ export default function CheckoutPage() {
 ## Risks & Mitigation
 
 ### Risk 1: 결제 실패율 높음
+
 **Impact**: 높음 (수익 직결)
 **Probability**: 중간
 **Mitigation**:
+
 - 재시도 로직 (3회, 24시간 간격)
 - 결제 실패 알림 (이메일 + 푸시)
 - 카드 변경 UI 제공
 
 ### Risk 2: Cron Job 실행 실패
+
 **Impact**: 높음
 **Probability**: 낮음
 **Mitigation**:
+
 - 외부 Cron 서비스 백업 (cron-job.org)
 - 실패 시 알람 (Slack, 이메일)
 - 수동 실행 API 제공
 
 ### Risk 3: 토스페이먼츠 API 장애
+
 **Impact**: 높음
 **Probability**: 낮음
 **Mitigation**:
+
 - 재시도 로직 (exponential backoff)
 - 장애 상황 모니터링
 - 고객 공지 자동화
@@ -267,11 +291,13 @@ export default function CheckoutPage() {
 ## Notes
 
 ### 비용 구조 (토스페이먼츠)
+
 - 정기 결제 수수료: 약 2.5~3.5%
 - 월 10,000원 × 3% = 300원 수수료
 - 실제 수익: 9,700원/월
 
 ### 향후 개선 (V2)
+
 - 연간 결제 옵션 (10개월 가격에 12개월)
 - 무료 체험 (14일)
 - 쿠폰 및 프로모션 코드

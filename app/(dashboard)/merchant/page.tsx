@@ -1,22 +1,22 @@
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { Package, Store, Timer, TrendingUp } from 'lucide-react';
-import { isDevMode, DEV_USER_ID } from '@/lib/dev-auth';
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { Package, Store, Timer, TrendingUp } from 'lucide-react'
+import { isDevMode, DEV_USER_ID } from '@/lib/dev-auth'
 
 export default async function MerchantDashboard() {
-  let userId: string | null = null;
+  let userId: string | null = null
 
   if (isDevMode()) {
-    userId = DEV_USER_ID;
+    userId = DEV_USER_ID
   } else {
-    const authResult = await auth();
-    userId = authResult.userId;
+    const authResult = await auth()
+    userId = authResult.userId
     if (!userId) {
-      redirect('/sign-in');
+      redirect('/sign-in')
     }
   }
 
@@ -29,23 +29,21 @@ export default async function MerchantDashboard() {
       products: true,
       timeSales: true,
     },
-  });
+  })
 
-  const hasStore = stores.length > 0;
-  const store = stores[0]; // 첫 번째 상점
+  const hasStore = stores.length > 0
+  const store = stores[0] // 첫 번째 상점
 
   // 통계 계산
-  const totalProducts = store?.products.length || 0;
-  const activeTimeSales = store?.timeSales.filter((ts) => ts.isActive).length || 0;
+  const totalProducts = store?.products.length || 0
+  const activeTimeSales = store?.timeSales.filter((ts) => ts.isActive).length || 0
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">대시보드</h1>
-          <p className="text-muted-foreground">
-            상점 운영 현황을 한눈에 확인하세요
-          </p>
+          <p className="text-muted-foreground">상점 운영 현황을 한눈에 확인하세요</p>
         </div>
         {!hasStore && (
           <Button asChild>
@@ -77,61 +75,45 @@ export default async function MerchantDashboard() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  내 상점
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">내 상점</CardTitle>
                 <Store className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{store.storeName}</div>
-                <p className="text-xs text-muted-foreground">
-                  {store.category}
-                </p>
+                <p className="text-xs text-muted-foreground">{store.category}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  등록 상품
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">등록 상품</CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{totalProducts}개</div>
-                <p className="text-xs text-muted-foreground">
-                  판매 중인 상품
-                </p>
+                <p className="text-xs text-muted-foreground">판매 중인 상품</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  활성 타임세일
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">활성 타임세일</CardTitle>
                 <Timer className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{activeTimeSales}개</div>
-                <p className="text-xs text-muted-foreground">
-                  진행 중인 타임세일
-                </p>
+                <p className="text-xs text-muted-foreground">진행 중인 타임세일</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  이번 주 방문자
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">이번 주 방문자</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">-</div>
-                <p className="text-xs text-muted-foreground">
-                  곧 제공 예정
-                </p>
+                <p className="text-xs text-muted-foreground">곧 제공 예정</p>
               </CardContent>
             </Card>
           </div>
@@ -165,5 +147,5 @@ export default async function MerchantDashboard() {
         </>
       )}
     </div>
-  );
+  )
 }

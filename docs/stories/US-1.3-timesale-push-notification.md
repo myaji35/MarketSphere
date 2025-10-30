@@ -20,6 +20,7 @@
 ## Acceptance Criteria
 
 ### AC-1: 타임세일 생성 UI
+
 - [ ] "타임세일 시작" 버튼 (대시보드 메인 화면)
 - [ ] 할인율 선택 (10%, 20%, 30%, 50%)
 - [ ] 종료 시간 설정 (1시간, 2시간, 오늘 마감)
@@ -27,6 +28,7 @@
 - [ ] 미리보기 기능 (푸시 알림 내용 확인)
 
 ### AC-2: 푸시 알림 발송
+
 - [ ] **발송 시간**: 버튼 클릭 후 10초 이내
 - [ ] **타겟팅**: 단골 고객 자동 선택
 - [ ] **도달률**: 95% 이상
@@ -36,16 +38,19 @@
   - 딥링크: 상점 페이지로 이동
 
 ### AC-3: 위치 기반 타겟팅 (Geo-fencing)
+
 - [ ] 시장 반경 1km 내 고객 우선 발송
 - [ ] 위치 권한 허용한 고객만 타겟팅
 - [ ] 위치 정보 실시간 업데이트
 
 ### AC-4: 개인화 푸시
+
 - [ ] 고객 구매 이력 기반 추천 (예: 과일 자주 구매 → 과일 타임세일 우선 알림)
 - [ ] 마지막 방문 시간 기반 (1주일 이상 미방문 고객 타겟팅)
 - [ ] 푸시 설정 존중 (알림 거부 고객 제외)
 
 ### AC-5: 발송 결과 확인
+
 - [ ] 발송 완료 알림 (푸시 발송 10초 후)
 - [ ] 통계 대시보드:
   - 발송 인원
@@ -54,6 +59,7 @@
   - 전환율 (실제 방문 또는 구매)
 
 ### AC-6: 예약 발송 (선택)
+
 - [ ] "내일 오전 10시 발송" 예약 가능
 - [ ] 예약 취소 기능
 - [ ] 예약 목록 조회
@@ -63,21 +69,23 @@
 ## Technical Notes
 
 ### Frontend (Next.js 14+)
+
 - **UI 컴포넌트**: shadcn/ui Dialog, Button, Select
 - **Form Handling**: React Hook Form + Zod
 
 **예시 코드**:
+
 ```tsx
 // app/(dashboard)/merchant/timesale/page.tsx
-"use client"
+'use client'
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Select } from "@/components/ui/select"
-import { createTimeSale } from "@/app/actions/timesale-actions"
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Button } from '@/components/ui/button'
+import { Select } from '@/components/ui/select'
+import { createTimeSale } from '@/app/actions/timesale-actions'
 
 const timeSaleSchema = z.object({
   discountRate: z.number().min(10).max(50),
@@ -101,28 +109,25 @@ export default function TimeSalePage() {
     }
   }
 
-  return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      {/* UI 컴포넌트 */}
-    </form>
-  )
+  return <form onSubmit={form.handleSubmit(onSubmit)}>{/* UI 컴포넌트 */}</form>
 }
 ```
 
 ### Backend (Server Actions)
 
 **app/actions/timesale-actions.ts**:
-```typescript
-"use server"
 
-import { auth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
-import { sendPushNotification } from "@/lib/push"
+```typescript
+'use server'
+
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { sendPushNotification } from '@/lib/push'
 
 export async function createTimeSale(data: CreateTimeSaleInput) {
   const session = await auth()
-  if (!session || session.user.role !== "MERCHANT") {
-    throw new Error("Unauthorized")
+  if (!session || session.user.role !== 'MERCHANT') {
+    throw new Error('Unauthorized')
   }
 
   // 1. 타임세일 생성
@@ -155,7 +160,7 @@ export async function createTimeSale(data: CreateTimeSaleInput) {
       title: `[${data.storeName}] 긴급 타임세일!`,
       body: `지금 방문하시면 ${data.discountRate}% 할인! (${data.duration}분만)`,
       data: {
-        type: "timesale",
+        type: 'timesale',
         storeId: data.storeId,
         timeSaleId: timeSale.id,
       },
@@ -175,8 +180,9 @@ export async function createTimeSale(data: CreateTimeSaleInput) {
 ### Push Notification Service (Firebase FCM)
 
 **lib/push.ts**:
+
 ```typescript
-import admin from "firebase-admin"
+import admin from 'firebase-admin'
 
 // Firebase Admin SDK 초기화
 if (!admin.apps.length) {
@@ -184,7 +190,7 @@ if (!admin.apps.length) {
     credential: admin.credential.cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
   })
 }
@@ -214,7 +220,7 @@ export async function sendPushNotification(input: PushNotificationInput) {
       failureCount: response.failureCount,
     }
   } catch (error) {
-    console.error("❌ 푸시 발송 실패:", error)
+    console.error('❌ 푸시 발송 실패:', error)
     throw error
   }
 }
@@ -248,6 +254,7 @@ model PushToken {
 ## Dependencies
 
 ### Must Have Before This Story
+
 - [ ] Firebase 프로젝트 생성 및 설정
 - [ ] FCM 서버 키 발급
 - [ ] 클라이언트 앱에 FCM SDK 연동
@@ -255,6 +262,7 @@ model PushToken {
 - [ ] 단골 기능 구현 (Favorite 테이블)
 
 ### External Dependencies
+
 - [ ] Firebase Cloud Messaging (FCM)
 - [ ] 위치 권한 (Geo-fencing용)
 
@@ -263,20 +271,24 @@ model PushToken {
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] 타임세일 생성 로직
 - [ ] 단골 고객 조회 쿼리
 - [ ] 푸시 알림 발송 로직 (모킹)
 
 ### Integration Tests
+
 - [ ] 전체 플로우 (타임세일 생성 → 푸시 발송)
 - [ ] FCM API 연동 테스트
 - [ ] 발송 실패 시 재시도 로직
 
 ### Performance Tests
+
 - [ ] 1,000명 단골 고객에게 10초 이내 발송
 - [ ] FCM API 레이트 리밋 처리
 
 ### UX Tests
+
 - [ ] 소상공인 5명 대상 사용성 테스트
 - [ ] "버튼 클릭 → 푸시 도착" 시간 측정 (목표: 10초)
 - [ ] 푸시 알림 클릭 → 앱 열림 확인
@@ -298,12 +310,14 @@ model PushToken {
 ## Success Metrics
 
 ### 정량적 지표
+
 - 평균 발송 시간: 10초 이내
 - 푸시 도달률: 95% 이상
 - 푸시 오픈율: 30% 이상 (일반 푸시 대비 2배)
 - 전환율: 10% 이상 (푸시 받은 고객 중 실제 방문)
 
 ### 정성적 지표
+
 - "긴급 재고 처리에 도움됐다" 피드백
 - "단골 고객이 바로 와줬다" 만족도
 
@@ -312,25 +326,31 @@ model PushToken {
 ## Risks & Mitigation
 
 ### Risk 1: 푸시 도달률 낮음
+
 **Impact**: 높음
 **Probability**: 중간
 **Mitigation**:
+
 - FCM 토큰 유효성 주기적 검증
 - 실패 시 재발송 로직
 - 대체 채널 (SMS) 고려
 
 ### Risk 2: 스팸 신고
+
 **Impact**: 높음
 **Probability**: 낮음
 **Mitigation**:
+
 - 하루 최대 3회 타임세일 제한
 - 푸시 설정 UI 명확히 제공
 - "알림 끄기" 옵션 제공
 
 ### Risk 3: 서버 부하
+
 **Impact**: 중간
 **Probability**: 낮음
 **Mitigation**:
+
 - 푸시 발송 비동기 처리 (Queue)
 - FCM Batch API 활용 (최대 500개)
 
@@ -339,10 +359,12 @@ model PushToken {
 ## Notes
 
 ### 차별점
+
 - **네이버 스마트스토어**: 푸시 알림 없음 (고객이 직접 검색)
 - **MarketSphere**: 버튼 클릭 → 10초 안에 단골에게 즉시 알림
 
 ### 향후 개선 (V2)
+
 - A/B 테스트 (푸시 메시지 최적화)
 - 예측 발송 (AI가 최적 발송 시간 추천)
 - 그룹 푸시 (시장 전체 타임세일 동시 발송)

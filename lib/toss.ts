@@ -138,12 +138,7 @@ export const SUBSCRIPTION_PLANS = {
   BASIC: {
     name: '기본',
     price: 10000, // 월 10,000원
-    features: [
-      'AI 콘텐츠 생성',
-      '푸시 알림',
-      '기본 챗봇',
-      '월 100건 AI 생성',
-    ],
+    features: ['AI 콘텐츠 생성', '푸시 알림', '기본 챗봇', '월 100건 AI 생성'],
   },
   PREMIUM: {
     name: '프리미엄',

@@ -1,16 +1,16 @@
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { Plus, Package } from 'lucide-react';
-import { getUserId } from '@/lib/get-user-id';
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Link from 'next/link'
+import { Plus, Package } from 'lucide-react'
+import { getUserId } from '@/lib/get-user-id'
 
 export default async function ProductsPage() {
-  const userId = await getUserId();
+  const userId = await getUserId()
 
   if (!userId) {
-    redirect('/sign-in');
+    redirect('/sign-in')
   }
 
   const store = await prisma.store.findFirst({
@@ -24,10 +24,10 @@ export default async function ProductsPage() {
         },
       },
     },
-  });
+  })
 
   if (!store) {
-    redirect('/merchant/store/new');
+    redirect('/merchant/store/new')
   }
 
   return (
@@ -35,9 +35,7 @@ export default async function ProductsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">상품 관리</h1>
-          <p className="text-muted-foreground">
-            등록된 상품을 관리하고 새로운 상품을 추가하세요
-          </p>
+          <p className="text-muted-foreground">등록된 상품을 관리하고 새로운 상품을 추가하세요</p>
         </div>
         <Button asChild>
           <Link href="/merchant/products/new">
@@ -93,9 +91,7 @@ export default async function ProductsPage() {
                       </span>
                     </>
                   ) : (
-                    <span className="text-xl font-bold">
-                      {product.price.toLocaleString()}원
-                    </span>
+                    <span className="text-xl font-bold">{product.price.toLocaleString()}원</span>
                   )}
                 </div>
                 {product.aiGeneratedDescription && (
@@ -115,14 +111,12 @@ export default async function ProductsPage() {
                     ))}
                   </div>
                 )}
-                <div className="text-sm text-muted-foreground">
-                  재고: {product.stock}개
-                </div>
+                <div className="text-sm text-muted-foreground">재고: {product.stock}개</div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
     </div>
-  );
+  )
 }

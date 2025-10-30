@@ -1,19 +1,15 @@
-import { ReactNode } from 'react';
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import { DashboardNav } from '@/components/layout/dashboard-nav';
-import { isDevMode } from '@/lib/dev-auth';
+import { ReactNode } from 'react'
+import { auth } from '@clerk/nextjs/server'
+import { redirect } from 'next/navigation'
+import { DashboardNav } from '@/components/layout/dashboard-nav'
+import { isDevMode } from '@/lib/dev-auth'
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default async function DashboardLayout({ children }: { children: ReactNode }) {
   // 개발 모드가 아닐 때만 인증 확인
   if (!isDevMode()) {
-    const { userId } = await auth();
+    const { userId } = await auth()
     if (!userId) {
-      redirect('/sign-in');
+      redirect('/sign-in')
     }
   }
 
@@ -25,9 +21,7 @@ export default async function DashboardLayout({
         </div>
       )}
       <DashboardNav />
-      <main className="container mx-auto py-6 px-4 lg:px-8">
-        {children}
-      </main>
+      <main className="container mx-auto py-6 px-4 lg:px-8">{children}</main>
     </div>
-  );
+  )
 }

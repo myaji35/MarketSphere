@@ -1,9 +1,9 @@
-import OpenAI from 'openai';
+import OpenAI from 'openai'
 
 // OpenAI 클라이언트 (API 키가 없으면 런타임에서 에러)
 export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-build',
-});
+})
 
 /**
  * 더미 마케팅 콘텐츠 생성 (API 키가 없을 때 사용)
@@ -15,7 +15,7 @@ function generateDummyMarketingContent(): { description: string; hashtags: strin
     '오늘 아침 직접 준비한 신선한 상품! 한정 수량으로 준비했습니다.',
     '전통의 맛을 그대로! 우리 가게 대표 상품입니다.',
     '가성비 최고! 품질은 높이고 가격은 낮춘 특별한 상품입니다.',
-  ];
+  ]
 
   const dummyHashtags = [
     ['#전통시장', '#신선한', '#당일제조', '#가성비최고', '#건강한재료'],
@@ -23,14 +23,14 @@ function generateDummyMarketingContent(): { description: string; hashtags: strin
     ['#오늘의특가', '#한정수량', '#서둘러주세요', '#품질보장', '#정성가득'],
     ['#장인정신', '#수제', '#정통', '#믿을수있는', '#프리미엄'],
     ['#가족건강', '#신선식품', '#매일신선', '#품질인증', '#안심'],
-  ];
+  ]
 
-  const randomIndex = Math.floor(Math.random() * dummyDescriptions.length);
+  const randomIndex = Math.floor(Math.random() * dummyDescriptions.length)
 
   return {
     description: dummyDescriptions[randomIndex],
     hashtags: dummyHashtags[randomIndex],
-  };
+  }
 }
 
 /**
@@ -39,9 +39,9 @@ function generateDummyMarketingContent(): { description: string; hashtags: strin
 export async function generateMarketingContent(imageUrl: string) {
   // API 키가 없거나 더미 키인 경우 더미 데이터 반환
   if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'dummy-key-for-build') {
-    console.log('⚠️ OPENAI_API_KEY가 설정되지 않았습니다. 더미 데이터를 반환합니다.');
-    await new Promise(resolve => setTimeout(resolve, 1500)); // 실제 API 호출처럼 지연
-    return generateDummyMarketingContent();
+    console.log('⚠️ OPENAI_API_KEY가 설정되지 않았습니다. 더미 데이터를 반환합니다.')
+    await new Promise((resolve) => setTimeout(resolve, 1500)) // 실제 API 호출처럼 지연
+    return generateDummyMarketingContent()
   }
 
   try {
@@ -84,21 +84,21 @@ JSON 형식으로 응답해주세요:
       response_format: { type: 'json_object' },
       max_tokens: 500,
       temperature: 0.8,
-    });
+    })
 
-    const content = completion.choices[0]?.message?.content;
+    const content = completion.choices[0]?.message?.content
     if (!content) {
-      throw new Error('No content generated from OpenAI');
+      throw new Error('No content generated from OpenAI')
     }
 
-    const result = JSON.parse(content);
+    const result = JSON.parse(content)
     return {
       description: result.description,
       hashtags: result.hashtags,
-    };
+    }
   } catch (error) {
-    console.error('Error generating marketing content:', error);
-    throw new Error('Failed to generate marketing content');
+    console.error('Error generating marketing content:', error)
+    throw new Error('Failed to generate marketing content')
   }
 }
 
@@ -109,14 +109,14 @@ JSON 형식으로 응답해주세요:
 export async function enhanceProductImage(imageUrl: string) {
   // API 키가 없거나 더미 키인 경우 더미 데이터 반환
   if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'dummy-key-for-build') {
-    console.log('⚠️ OPENAI_API_KEY가 설정되지 않았습니다. 더미 분석 결과를 반환합니다.');
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('⚠️ OPENAI_API_KEY가 설정되지 않았습니다. 더미 분석 결과를 반환합니다.')
+    await new Promise((resolve) => setTimeout(resolve, 1000))
     return {
       brightness: '적정',
       sharpness: '적정',
       background: '깔끔함',
       suggestions: ['상품이 잘 보입니다', '조명이 좋습니다', '배경이 깔끔합니다'],
-    };
+    }
   }
 
   try {
@@ -154,17 +154,17 @@ export async function enhanceProductImage(imageUrl: string) {
       ],
       response_format: { type: 'json_object' },
       max_tokens: 300,
-    });
+    })
 
-    const content = completion.choices[0]?.message?.content;
+    const content = completion.choices[0]?.message?.content
     if (!content) {
-      throw new Error('No analysis from OpenAI');
+      throw new Error('No analysis from OpenAI')
     }
 
-    return JSON.parse(content);
+    return JSON.parse(content)
   } catch (error) {
-    console.error('Error analyzing image:', error);
-    throw new Error('Failed to analyze image');
+    console.error('Error analyzing image:', error)
+    throw new Error('Failed to analyze image')
   }
 }
 
@@ -178,40 +178,40 @@ export async function generateWeatherBasedMarketing(
 ) {
   // API 키가 없거나 더미 키인 경우 더미 데이터 반환
   if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'dummy-key-for-build') {
-    console.log('⚠️ OPENAI_API_KEY가 설정되지 않았습니다. 더미 마케팅 메시지를 반환합니다.');
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('⚠️ OPENAI_API_KEY가 설정되지 않았습니다. 더미 마케팅 메시지를 반환합니다.')
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    let message = '';
-    let emoji = '';
-    let discount = 15;
+    let message = ''
+    let emoji = ''
+    let discount = 15
 
     if (weather.includes('비')) {
-      message = `비 오는 날엔 따뜻한 ${productCategory}! 우천 할인 진행 중`;
-      emoji = '☔';
-      discount = 20;
+      message = `비 오는 날엔 따뜻한 ${productCategory}! 우천 할인 진행 중`
+      emoji = '☔'
+      discount = 20
     } else if (weather.includes('눈')) {
-      message = `눈 오는 날 특별한 ${productCategory} 할인!`;
-      emoji = '❄️';
-      discount = 25;
+      message = `눈 오는 날 특별한 ${productCategory} 할인!`
+      emoji = '❄️'
+      discount = 25
     } else if (temperature >= 28) {
-      message = `무더운 여름! 시원한 ${productCategory} 특가`;
-      emoji = '☀️';
-      discount = 20;
+      message = `무더운 여름! 시원한 ${productCategory} 특가`
+      emoji = '☀️'
+      discount = 20
     } else if (temperature <= 5) {
-      message = `추운 날씨! 따뜻한 ${productCategory}로 힘내세요`;
-      emoji = '🧣';
-      discount = 15;
+      message = `추운 날씨! 따뜻한 ${productCategory}로 힘내세요`
+      emoji = '🧣'
+      discount = 15
     } else {
-      message = `오늘의 신선한 ${productCategory} 특가!`;
-      emoji = '🌟';
-      discount = 10;
+      message = `오늘의 신선한 ${productCategory} 특가!`
+      emoji = '🌟'
+      discount = 10
     }
 
     return {
       message,
       emoji,
       discount_suggestion: discount,
-    };
+    }
   }
 
   try {
@@ -242,16 +242,16 @@ JSON 형식으로 응답:
       response_format: { type: 'json_object' },
       max_tokens: 200,
       temperature: 0.9,
-    });
+    })
 
-    const content = completion.choices[0]?.message?.content;
+    const content = completion.choices[0]?.message?.content
     if (!content) {
-      throw new Error('No content generated');
+      throw new Error('No content generated')
     }
 
-    return JSON.parse(content);
+    return JSON.parse(content)
   } catch (error) {
-    console.error('Error generating weather-based marketing:', error);
-    throw new Error('Failed to generate weather-based marketing');
+    console.error('Error generating weather-based marketing:', error)
+    throw new Error('Failed to generate weather-based marketing')
   }
 }

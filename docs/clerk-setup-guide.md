@@ -40,11 +40,7 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { koKR } from '@clerk/localizations'
 
 export default function RootLayout({ children }) {
-  return (
-    <ClerkProvider localization={koKR}>
-      {/* ... */}
-    </ClerkProvider>
-  )
+  return <ClerkProvider localization={koKR}>{/* ... */}</ClerkProvider>
 }
 ```
 
@@ -110,6 +106,7 @@ Clerk → Webhooks → Add Endpoint:
 **URL**: `https://your-domain.com/api/webhooks/clerk`
 
 **Events**:
+
 - `user.created`
 - `user.updated`
 - `user.deleted`
@@ -198,7 +195,7 @@ export async function POST(req: Request) {
 
 ```typescript
 // app/actions/store-actions.ts
-"use server"
+'use server'
 
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
@@ -236,7 +233,7 @@ export async function createStore(data: CreateStoreInput) {
 ## 8. 클라이언트 컴포넌트에서 사용
 
 ```tsx
-"use client"
+'use client'
 
 import { useUser, useAuth } from '@clerk/nextjs'
 import { UserButton } from '@clerk/nextjs'
@@ -265,16 +262,19 @@ export function Header() {
 ### 9.1. 전화번호 인증 (SMS)
 
 Clerk Dashboard → User & Authentication → Phone:
+
 - SMS Provider: Twilio (권장)
 - 한국 번호: +82 지원
 
 ### 9.2. 소셜 로그인
 
 **Google**:
+
 - Clerk Dashboard → Social Connections → Google
 - 자동 구성 (Clerk에서 제공)
 
 **Kakao / Naver** (Custom OAuth):
+
 1. Kakao/Naver Developers에서 앱 생성
 2. Redirect URI: `https://your-domain.clerk.accounts.dev/v1/oauth_callback`
 3. Clerk Dashboard → Social Connections → Add custom provider
@@ -294,6 +294,7 @@ CLERK_WEBHOOK_SECRET="whsec_..."
 ### 도메인 설정
 
 Clerk Dashboard → Domains:
+
 - Production: `marketsphere.com`
 - Development: `localhost:3000`
 
@@ -325,6 +326,7 @@ npx prisma migrate dev --name switch-to-clerk
 ---
 
 **완료 체크리스트**:
+
 - [ ] Clerk 프로젝트 생성
 - [ ] API 키 환경 변수 설정
 - [ ] Webhook 엔드포인트 구현

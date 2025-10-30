@@ -1,20 +1,12 @@
-'use client';
+'use client'
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { UserButton } from '@clerk/nextjs';
-import { Button } from '@/components/ui/button';
-import {
-  Store,
-  Package,
-  Timer,
-  BarChart3,
-  Settings,
-  Home,
-  User,
-} from 'lucide-react';
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { UserButton } from '@clerk/nextjs'
+import { Button } from '@/components/ui/button'
+import { Store, Package, Timer, BarChart3, Settings, Home, User } from 'lucide-react'
 
-const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true';
+const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === 'true'
 
 const merchantNavItems = [
   {
@@ -47,40 +39,33 @@ const merchantNavItems = [
     href: '/merchant/settings',
     icon: Settings,
   },
-];
+]
 
 export function DashboardNav() {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container flex h-16 items-center px-4 lg:px-8">
         <div className="mr-8 flex items-center">
           <Link href="/merchant" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-primary">
-              MarketSphere
-            </span>
+            <span className="text-2xl font-bold text-primary">MarketSphere</span>
           </Link>
         </div>
 
         <nav className="flex items-center space-x-1 flex-1">
           {merchantNavItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+            const Icon = item.icon
+            const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
 
             return (
-              <Button
-                key={item.href}
-                variant={isActive ? 'secondary' : 'ghost'}
-                size="sm"
-                asChild
-              >
+              <Button key={item.href} variant={isActive ? 'secondary' : 'ghost'} size="sm" asChild>
                 <Link href={item.href} className="flex items-center gap-2">
                   <Icon className="h-4 w-4" />
                   <span className="hidden sm:inline">{item.title}</span>
                 </Link>
               </Button>
-            );
+            )
           })}
         </nav>
 
@@ -96,5 +81,5 @@ export function DashboardNav() {
         </div>
       </div>
     </header>
-  );
+  )
 }

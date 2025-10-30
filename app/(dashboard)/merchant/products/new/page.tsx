@@ -1,13 +1,13 @@
-import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { ProductForm } from '@/components/forms/product-form';
-import { getUserId } from '@/lib/get-user-id';
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import { ProductForm } from '@/components/forms/product-form'
+import { getUserId } from '@/lib/get-user-id'
 
 export default async function NewProductPage() {
-  const userId = await getUserId();
+  const userId = await getUserId()
 
   if (!userId) {
-    redirect('/sign-in');
+    redirect('/sign-in')
   }
 
   // 사용자의 상점 조회
@@ -15,10 +15,10 @@ export default async function NewProductPage() {
     where: {
       ownerId: userId,
     },
-  });
+  })
 
   if (!store) {
-    redirect('/merchant/store/new');
+    redirect('/merchant/store/new')
   }
 
   return (
@@ -32,5 +32,5 @@ export default async function NewProductPage() {
 
       <ProductForm storeId={store.id} />
     </div>
-  );
+  )
 }
