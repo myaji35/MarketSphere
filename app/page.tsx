@@ -30,6 +30,9 @@ import {
   Star,
   Quote,
 } from 'lucide-react'
+import { BorderBeam } from '@/components/magicui/border-beam'
+import { AnimatedGridPattern } from '@/components/magicui/animated-grid-pattern'
+import { DotPattern } from '@/components/magicui/dot-pattern'
 
 export default function Home() {
   const testimonials = [
@@ -60,7 +63,13 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       {/* Hero Section - Enhanced */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-20 md:py-32">
-        <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+        <AnimatedGridPattern
+          numSquares={30}
+          maxOpacity={0.3}
+          duration={3}
+          repeatDelay={1}
+          className="absolute inset-0 -z-10 text-blue-500/20"
+        />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_50%,rgba(168,85,247,0.1),transparent_50%)]"></div>
 
         <div className="container">
@@ -94,6 +103,13 @@ export default function Home() {
                   <span className="relative z-10">무료로 시작하기</span>
                   <ArrowRight className="relative z-10 ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   <div className="absolute inset-0 -z-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 opacity-0 group-hover:animate-shimmer group-hover:opacity-100"></div>
+                  <BorderBeam
+                    size={250}
+                    duration={12}
+                    delay={9}
+                    colorFrom="#60a5fa"
+                    colorTo="#a78bfa"
+                  />
                 </Link>
               </Button>
               <Button
@@ -132,8 +148,16 @@ export default function Home() {
       </section>
 
       {/* Solutions by Category - Tabs */}
-      <section className="py-20 bg-white">
-        <div className="container">
+      <section className="relative py-20 bg-white overflow-hidden">
+        <DotPattern
+          width={20}
+          height={20}
+          cx={1}
+          cy={1}
+          cr={1}
+          className="absolute inset-0 text-neutral-300/40"
+        />
+        <div className="container relative z-10">
           <div className="mx-auto max-w-2xl text-center mb-12">
             <Badge variant="outline" className="mb-4 border-purple-200 text-purple-700">
               맞춤 솔루션
@@ -470,6 +494,13 @@ export default function Home() {
                   <span className="relative z-10">무료로 시작하기</span>
                   <ArrowRight className="relative z-10 ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   <div className="absolute inset-0 -z-0 bg-gradient-to-r from-purple-500/0 via-purple-500/20 to-purple-500/0 opacity-0 group-hover:animate-shimmer group-hover:opacity-100"></div>
+                  <BorderBeam
+                    size={250}
+                    duration={12}
+                    delay={0}
+                    colorFrom="#c084fc"
+                    colorTo="#f472b6"
+                  />
                 </Link>
               </Button>
               <Button
