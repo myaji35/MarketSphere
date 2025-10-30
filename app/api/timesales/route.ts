@@ -1,24 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getUserId } from '@/lib/get-user-id'
-
-// 푸시 알림 발송 함수 (향후 Firebase 등으로 구현)
-async function sendPushNotification(tokens: string[], title: string, body: string) {
-  // TODO: Firebase Cloud Messaging 또는 다른 푸시 알림 서비스 통합
-  // 현재는 로그만 출력
-  console.log('Sending push notification:', {
-    tokens: tokens.length,
-    title,
-    body,
-  })
-
-  // 실제 구현 예시 (Firebase):
-  // const messaging = getMessaging();
-  // await messaging.sendMulticast({
-  //   tokens,
-  //   notification: { title, body },
-  // });
-}
+import { sendTimeSalePushNotification, removeInvalidPushTokens } from '@/lib/push'
 
 export async function POST(req: NextRequest) {
   try {
@@ -65,6 +48,7 @@ export async function POST(req: NextRequest) {
     })
 
     // 푸시 알림 발송 (단골 고객에게)
+    let pushResult = null
     if (shouldSendPush) {
       // 해당 상점을 '찜'한 고객들의 푸시 토큰 조회
       const favorites = await prisma.favorite.findMany({
@@ -83,10 +67,23 @@ export async function POST(req: NextRequest) {
       const tokens = favorites.flatMap((fav) => fav.user.pushTokens.map((pt) => pt.token))
 
       if (tokens.length > 0) {
-        await sendPushNotification(
+        // Firebase FCM을 통해 푸시 알림 발송
+        pushResult = await sendTimeSalePushNotification({
+          storeId,
+          storeName: store.storeName,
+          title,
+          discountRate: parseInt(discountRate),
+          endTime: new Date(endTime),
           tokens,
-          `${store.storeName} 타임세일!`,
-          `${title} - ${discountRate}% 할인 중!`
+        })
+
+        // 잘못된 토큰 삭제
+        if (pushResult.invalidTokens.length > 0) {
+          await removeInvalidPushTokens(pushResult.invalidTokens)
+        }
+
+        console.log(
+          `✅ 타임세일 푸시 발송 완료: ${pushResult.successCount}/${tokens.length} (실패: ${pushResult.failureCount})`
         )
       }
     }
@@ -95,6 +92,13 @@ export async function POST(req: NextRequest) {
       success: true,
       data: timeSale,
       pushSent: shouldSendPush,
+      pushResult: pushResult
+        ? {
+            totalTargets: pushResult.successCount + pushResult.failureCount,
+            successCount: pushResult.successCount,
+            failureCount: pushResult.failureCount,
+          }
+        : null,
     })
   } catch (error) {
     console.error('Error creating time sale:', error)
