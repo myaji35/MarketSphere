@@ -371,7 +371,117 @@ model PushToken {
 
 ---
 
+## Implementation Status
+
+**구현 완료 날짜**: 2025년 10월 30일
+
+### 구현된 기능 (MVP)
+
+#### ✅ Core Features
+
+- **Firebase FCM 푸시 알림 서비스** (`lib/push.ts`)
+  - Firebase Admin SDK 초기화 및 설정
+  - sendPushNotification() - FCM multicast 발송
+  - sendTimeSalePushNotification() - 타임세일 전용 푸시
+  - removeInvalidPushTokens() - 만료된 토큰 자동 정리
+  - 개발 모드 더미 응답 지원
+
+- **타임세일 API 푸시 연동** (`app/api/timesales/route.ts`)
+  - 단골 고객 (Favorite) 조회
+  - 푸시 토큰 수집 및 배치 발송
+  - 발송 결과 추적 (성공/실패 카운트)
+  - 잘못된 토큰 자동 삭제
+  - API 응답에 푸시 결과 포함
+
+- **푸시 알림 메시지 포맷**
+  - 제목: "🔥 [상점명] 긴급 타임세일!"
+  - 본문: "{제목} - 지금 방문하시면 {할인율}% 할인! ({남은시간}만 남았어요)"
+  - 데이터: { type: 'timesale', storeId, screen: 'StoreDetail' }
+  - 딥링크를 통한 상점 페이지 직접 이동
+
+#### 🔄 테스트 현황
+
+- 전체 테스트: 28/28 통과 ✅
+  - 기존 테스트: 18개
+  - 푸시 알림 테스트: 10개 (신규)
+- Type checking: 통과 ✅
+- 시간 계산 로직 검증 완료 ✅
+- 빈 토큰 배열 처리 검증 ✅
+
+#### 📊 푸시 알림 기능 상세
+
+**Firebase FCM 설정:**
+
+- High priority delivery (Android & iOS)
+- Sound notification enabled
+- Badge count support
+- Channel ID: 'timesale'
+
+**동적 시간 계산:**
+
+- 2시간 이상: "5시간"
+- 1~2시간: "1시간 30분"
+- 1시간 미만: "45분"
+
+**토큰 관리:**
+
+- 발송 실패 토큰 자동 감지
+- DB에서 만료된 토큰 자동 삭제
+- 유효 토큰만 유지
+
+#### 📝 남은 작업 (V1 출시 전)
+
+- [ ] Firebase 프로젝트 생성 및 서비스 계정 설정
+- [ ] 프로덕션 Firebase 환경 변수 설정
+  - FIREBASE_PROJECT_ID
+  - FIREBASE_CLIENT_EMAIL
+  - FIREBASE_PRIVATE_KEY
+- [ ] 클라이언트 앱 FCM SDK 연동
+- [ ] 사용자 푸시 토큰 수집 기능 구현
+- [ ] 푸시 알림 수신 동의 UI
+- [ ] 파일럿 테스트 (소상공인 10명)
+- [ ] 푸시 도달률 모니터링 (목표: 95%)
+- [ ] 푸시 오픈율 측정 (목표: 30%)
+
+#### 🚀 V2 계획
+
+- Geo-fencing (위치 기반 타겟팅)
+- 개인화 푸시 (구매 이력 기반)
+- 예약 발송 기능
+- A/B 테스트 (메시지 최적화)
+- 푸시 통계 대시보드
+- 하루 최대 발송 횟수 제한 (스팸 방지)
+
+#### 🎯 Acceptance Criteria 달성 현황
+
+**AC-1: 타임세일 생성 UI** ✅
+
+- 타임세일 폼 UI 완성
+- 할인율, 시간 설정 가능
+- 푸시 알림 발송 체크박스
+
+**AC-2: 푸시 알림 발송** ✅ (개발 모드)
+
+- 발송 시간: <10초 (모의 발송)
+- 단골 고객 자동 타겟팅
+- FCM 배치 발송 로직 구현
+- 푸시 내용 및 딥링크 설정 완료
+
+**AC-3: 위치 기반 타겟팅** ⏳ (V2 계획)
+**AC-4: 개인화 푸시** ⏳ (V2 계획)
+
+**AC-5: 발송 결과 확인** ✅
+
+- API 응답에 발송 결과 포함
+- 성공/실패 카운트 제공
+- 콘솔 로그로 발송 완료 확인
+
+**AC-6: 예약 발송** ⏳ (V2 계획)
+
+---
+
 **작성일**: 2025년 10월 29일
+**구현 완료일**: 2025년 10월 30일 (MVP)
 **담당 개발자**: Backend Developer + Firebase Specialist
 **QA 담당자**: QA Lead
 **예상 완료일**: Sprint 2-3 종료 (4주 후)
