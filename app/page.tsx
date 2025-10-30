@@ -61,6 +61,7 @@ export default function Home() {
       {/* Hero Section - Enhanced */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-20 md:py-32">
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_50%,rgba(168,85,247,0.1),transparent_50%)]"></div>
 
         <div className="container">
           <div className="mx-auto max-w-4xl text-center">
@@ -72,7 +73,7 @@ export default function Home() {
             <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               AI가 마케팅을 대신하는
               <br />
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="animate-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent bg-[length:200%_auto]">
                 스마트한 전통시장
               </span>
             </h1>
@@ -86,30 +87,43 @@ export default function Home() {
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Button
                 size="lg"
-                className="h-14 bg-gradient-to-r from-blue-600 to-purple-600 px-8 text-base hover:from-blue-700 hover:to-purple-700"
+                className="group relative h-14 overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 px-8 text-base transition-all hover:from-blue-700 hover:to-purple-700 hover:shadow-lg hover:shadow-blue-500/50"
                 asChild
               >
                 <Link href="/sign-up">
-                  무료로 시작하기 <ArrowRight className="ml-2 h-5 w-5" />
+                  <span className="relative z-10">무료로 시작하기</span>
+                  <ArrowRight className="relative z-10 ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  <div className="absolute inset-0 -z-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 opacity-0 group-hover:animate-shimmer group-hover:opacity-100"></div>
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-base" asChild>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-14 px-8 text-base hover:bg-muted/50"
+                asChild
+              >
                 <Link href="/search">상품 둘러보기</Link>
               </Button>
             </div>
 
             {/* Trust Badges */}
             <div className="mt-16 grid gap-6 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
-                <div className="mb-2 text-3xl font-bold text-blue-600">2,500+</div>
+              <div className="group rounded-2xl bg-white/60 p-6 backdrop-blur-sm transition-all hover:bg-white/80 hover:shadow-lg hover:shadow-blue-500/20">
+                <div className="mb-2 text-3xl font-bold text-blue-600 transition-transform group-hover:scale-110">
+                  2,500+
+                </div>
                 <div className="text-sm text-muted-foreground">등록된 상점</div>
               </div>
-              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
-                <div className="mb-2 text-3xl font-bold text-purple-600">150만+</div>
+              <div className="group rounded-2xl bg-white/60 p-6 backdrop-blur-sm transition-all hover:bg-white/80 hover:shadow-lg hover:shadow-purple-500/20 sm:animate-float">
+                <div className="mb-2 text-3xl font-bold text-purple-600 transition-transform group-hover:scale-110">
+                  150만+
+                </div>
                 <div className="text-sm text-muted-foreground">월간 방문자</div>
               </div>
-              <div className="rounded-2xl bg-white/60 p-6 backdrop-blur-sm">
-                <div className="mb-2 text-3xl font-bold text-pink-600">4.9★</div>
+              <div className="group rounded-2xl bg-white/60 p-6 backdrop-blur-sm transition-all hover:bg-white/80 hover:shadow-lg hover:shadow-pink-500/20">
+                <div className="mb-2 text-3xl font-bold text-pink-600 transition-transform group-hover:scale-110">
+                  4.9★
+                </div>
                 <div className="text-sm text-muted-foreground">고객 만족도</div>
               </div>
             </div>
@@ -150,9 +164,9 @@ export default function Home() {
 
             <TabsContent value="merchant" className="mt-10">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-blue-500/50">
                       <Brain className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">AI 컨텐츠 생성</h3>
@@ -162,9 +176,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-purple-500/50">
                       <Zap className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">타임세일 자동화</h3>
@@ -174,9 +188,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-green-500/50">
                       <Package className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">재고 관리</h3>
@@ -186,9 +200,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-blue-100 bg-gradient-to-br from-blue-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-orange-500/50">
                       <Clock className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">날씨 기반 마케팅</h3>
@@ -202,9 +216,9 @@ export default function Home() {
 
             <TabsContent value="association" className="mt-10">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-purple-500/50">
                       <BarChart3 className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">통합 대시보드</h3>
@@ -214,9 +228,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-blue-500/50">
                       <MessageSquare className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">공동 마케팅</h3>
@@ -226,9 +240,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-green-500/50">
                       <CheckCircle2 className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">상점 승인 관리</h3>
@@ -238,9 +252,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-pink-500/50">
                       <TrendingUp className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">매출 분석</h3>
@@ -254,9 +268,9 @@ export default function Home() {
 
             <TabsContent value="customer" className="mt-10">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-green-100 bg-gradient-to-br from-green-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-green-500/50">
                       <Sparkles className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">AI 맞춤 추천</h3>
@@ -266,9 +280,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-green-100 bg-gradient-to-br from-green-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-blue-500/50">
                       <Search className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">통합 검색</h3>
@@ -278,9 +292,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-green-100 bg-gradient-to-br from-green-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-pink-500/50">
                       <Heart className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">단골 상점</h3>
@@ -290,9 +304,9 @@ export default function Home() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 border-green-100 bg-gradient-to-br from-green-50 to-white hover:shadow-lg transition-all">
+                <Card className="group border-2 border-green-100 bg-gradient-to-br from-green-50 to-white transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/30">
                   <CardContent className="pt-6">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg transition-transform group-hover:scale-110 group-hover:shadow-purple-500/50">
                       <Zap className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="mb-2 text-lg font-bold">실시간 알림</h3>
@@ -326,15 +340,18 @@ export default function Home() {
             {testimonials.map((testimonial, index) => (
               <Card
                 key={index}
-                className="border-2 bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all"
+                className="group border-2 bg-white/80 backdrop-blur-sm transition-all hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/20 hover:bg-white/90"
               >
                 <CardContent className="pt-6">
                   <div className="mb-4">
-                    <Quote className="h-8 w-8 text-purple-400" />
+                    <Quote className="h-8 w-8 text-purple-400 transition-all group-hover:text-purple-600 group-hover:scale-110" />
                   </div>
                   <div className="mb-4 flex gap-1">
                     {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400 transition-transform group-hover:scale-110"
+                      />
                     ))}
                   </div>
                   <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
@@ -431,8 +448,9 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
-        <div className="container">
+      <section className="relative overflow-hidden py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 animate-gradient bg-[length:200%_200%]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+        <div className="container relative z-10">
           <div className="mx-auto max-w-3xl text-center text-white">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-6">
               지금 바로 시작하세요
@@ -445,17 +463,19 @@ export default function Home() {
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Button
                 size="lg"
-                className="h-14 bg-white px-8 text-base text-purple-600 hover:bg-gray-50"
+                className="group relative h-14 overflow-hidden bg-white px-8 text-base text-purple-600 transition-all hover:shadow-2xl hover:shadow-white/50 hover:scale-105"
                 asChild
               >
                 <Link href="/sign-up">
-                  무료로 시작하기 <ArrowRight className="ml-2 h-5 w-5" />
+                  <span className="relative z-10">무료로 시작하기</span>
+                  <ArrowRight className="relative z-10 ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  <div className="absolute inset-0 -z-0 bg-gradient-to-r from-purple-500/0 via-purple-500/20 to-purple-500/0 opacity-0 group-hover:animate-shimmer group-hover:opacity-100"></div>
                 </Link>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="h-14 border-white px-8 text-base text-white hover:bg-white/10"
+                className="h-14 border-2 border-white px-8 text-base text-white transition-all hover:bg-white/20 hover:scale-105"
                 asChild
               >
                 <Link href="/contact">문의하기</Link>
